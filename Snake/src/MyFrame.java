@@ -13,7 +13,7 @@ public class MyFrame extends JFrame{
 		this.setLayout(null);
         this.setVisible(true);
         this.setResizable(false);
-        
+        // this is a comment
         cont=this.getContentPane();
         
         label=new JLabel("Hello Snake!");
