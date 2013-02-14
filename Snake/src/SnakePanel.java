@@ -76,25 +76,30 @@ public class SnakePanel extends JComponent
     public void componentShown  (ComponentEvent e)  { }
     
     public void checkWalls() {    
-       if (xp[0] + xlen >= xsize) { 
-           xp[0] = xsize - xlen;
+       if (xp[0] + xlen >/*=*/ xsize) { 
+           /*xp[0] = xsize - xlen;
            dx   = 0;
-           dy	= -20;
+           dy	= -20; */
+    	   xp[0] = 0; //enables the snake to appear on the opposite place on the screen[Angel]   
        } 
        if (xp[0] < 0) {
-           xp[0] = 0;
+           /*xp[0] = 0;
            dx   = 0;
-           dy	= 20;
+           dy	= 20; */
+    	   xp[0] += xsize; //enables the snake to appear on the opposite place on the screen[Angel] 
        } 
-       if (yp[0] + ylen >= ysize) {
-           yp[0] = ysize - ylen; 
+       if (yp[0] + ylen >/*=*/ ysize) {
+          /* yp[0] = ysize - ylen; 
            dx   = 20;
-           dy 	= 0;
+           dy 	= 0; */
+    	   yp[0]=0; //enables the snake to appear on the opposite place on the screen[Angel]
+    	   
        }             
        if (yp[0] < 0) {
-           yp[0] = 0;
+           /*yp[0] = 0;
            dx   = -20;
-           dy	= 0;
+           dy	= 0; */
+    	   yp[0] += ysize;
        }
     }
     
@@ -117,9 +122,9 @@ public class SnakePanel extends JComponent
         yp[0] += dy;
                 
         // check to see if the snake has hit any walls
-        /* not finished!!!!
+        /* not finished!!!! */
         checkWalls();
-        */
+       
         
         checkFood();
         //hi
