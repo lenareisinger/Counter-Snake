@@ -122,6 +122,7 @@ public class SnakePanel extends JComponent
         */
         
         checkFood();
+        //hi
         
         // sleep a bit until the next frame
         try { Thread.sleep(delay); } 
