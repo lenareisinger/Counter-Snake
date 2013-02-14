@@ -6,7 +6,7 @@ public class SnakeMain {
 	
 	// Create a new window, and put helloPanel inside it.
 	public SnakeMain() {
-		mainWindow = new JFrame("Bouncing Ball");
+		mainWindow = new JFrame("Counter-Snake");
 		mainWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		helloPanel = new SnakePanel();
