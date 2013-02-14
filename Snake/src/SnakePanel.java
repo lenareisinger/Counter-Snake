@@ -25,6 +25,7 @@ public class SnakePanel extends JComponent
     float xlen,ylen;    // size of ball
     float dx,dy;        // current speed + direction of ball 
     boolean start = true;
+    double randomNumber1, randomNumber2;
     BufferedImage background;
     
     int    delay;       // delay between frames in milliseconds
@@ -43,9 +44,9 @@ public class SnakePanel extends JComponent
         
         //draw food
         g2.setPaint(Color.green);
-        g2.fill(new Rectangle2D.Double(100, 100, xlen, ylen));
+        g2.fill(new Rectangle2D.Double(randomNumber1, randomNumber2, xlen, ylen));
         g2.setColor(Color.black);
-        g2.draw(new Rectangle2D.Double(100, 100, xlen, ylen));
+        g2.draw(new Rectangle2D.Double(randomNumber1, randomNumber2, xlen, ylen));
         
         for(int i = 0; i<snakeSize; i++) {
         	if(i==0) {
@@ -98,7 +99,9 @@ public class SnakePanel extends JComponent
     }
     
     public void checkFood() {
-    	if(xp[0]==100 && yp[0]==100) {
+    	if(xp[0]==randomNumber1 && yp[0]==randomNumber2) {
+            randomNumber1 = (xlen)*Math.round(Math.random()*((xsize/xlen)-1));
+            randomNumber2 = (ylen)*Math.round(Math.random()*((ysize/ylen)-1));
     		snakeSize++;
     	}
     }
@@ -149,6 +152,9 @@ public class SnakePanel extends JComponent
         dx    = 0;
         dy    = 20;
         delay = 100;
+        randomNumber1 = (xlen)*Math.round(Math.random()*((xsize/xlen)-1));
+        randomNumber2 = (ylen)*Math.round(Math.random()*((ysize/ylen)-1));
+
         for(int i = 1; i<snakeSize; i++) {
         	xp[i] = xp[0]-(i*xlen*sign(dx));
         	yp[i] = yp[0]-(i*ylen*sign(dy));
