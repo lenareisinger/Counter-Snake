@@ -8,7 +8,7 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-
+//test
 public class SnakePanel extends JComponent 
                          implements ComponentListener, KeyListener, Runnable {
 	
