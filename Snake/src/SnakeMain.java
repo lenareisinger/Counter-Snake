@@ -8,6 +8,7 @@ public class SnakeMain {
 	public SnakeMain() {
 		mainWindow = new JFrame("Counter-Snake");
 		mainWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		mainWindow.setResizable(false);
 		
 		helloPanel = new SnakePanel();
 		mainWindow.getContentPane().add(helloPanel);

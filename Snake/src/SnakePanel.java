@@ -26,7 +26,7 @@ public class SnakePanel extends JComponent
     float dx,dy;        // current speed + direction of ball 
     boolean start = true;
     double randomNumber1, randomNumber2;
-    BufferedImage background;
+    BufferedImage background, head;
     
     int    delay;       // delay between frames in milliseconds
     Thread animThread;  // animation thread                       
@@ -51,10 +51,13 @@ public class SnakePanel extends JComponent
         for(int i = 0; i<snakeSize; i++) {
         	if(i==0) {
         		// draw head
+        		/*
         		g2.setPaint(Color.red);
                 g2.fill(new Rectangle2D.Double(xp[i], yp[i], xlen, ylen));
                 g2.setColor(Color.black);
                 g2.draw(new Rectangle2D.Double(xp[i], yp[i], xlen, ylen));
+                */
+        		g2.drawImage(head, (int)xp[i], (int)yp[i], null);
         	}
         	else {
         		// draw body
@@ -144,7 +147,8 @@ public class SnakePanel extends JComponent
     public SnakePanel() {
         //loads background
     	try {
-            background = ImageIO.read(new File("bg2.png"));
+            background = ImageIO.read(new File("bg1.png"));
+            head = ImageIO.read(new File("head.png"));
         } catch (IOException e) {
         }
     	
