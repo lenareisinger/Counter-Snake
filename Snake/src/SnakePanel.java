@@ -22,8 +22,8 @@ public class SnakePanel extends JComponent
     float[] xp = new float[100];	// x position of snake
     float[] yp = new float[100];    // y position of snake
     int snakeSize = 4;
-    float xlen,ylen;    // size of ball
-    float dx,dy;        // current speed + direction of ball 
+    float xlen,ylen;    // size of snake
+    float dx,dy;        // current speed + direction of snake 
     boolean start = true;
     double randomNumber1, randomNumber2;
     BufferedImage background, head;
@@ -79,30 +79,18 @@ public class SnakePanel extends JComponent
     public void componentShown  (ComponentEvent e)  { }
     
     public void checkWalls() {    
-       if (xp[0] + xlen >/*=*/ xsize) { 
-           /*xp[0] = xsize - xlen;
-           dx   = 0;
-           dy	= -20; */
+       if (xp[0] + xlen > xsize) { 
     	   xp[0] = 0; //enables the snake to appear on the opposite place on the screen[Angel]   
        } 
        if (xp[0] < 0) {
-           /*xp[0] = 0;
-           dx   = 0;
-           dy	= 20; */
     	   xp[0] += xsize; //enables the snake to appear on the opposite place on the screen[Angel] 
        } 
-       if (yp[0] + ylen >/*=*/ ysize) {
-          /* yp[0] = ysize - ylen; 
-           dx   = 20;
-           dy 	= 0; */
+       if (yp[0] + ylen > ysize) {
     	   yp[0]=0; //enables the snake to appear on the opposite place on the screen[Angel]
     	   
        }             
        if (yp[0] < 0) {
-           /*yp[0] = 0;
-           dx   = -20;
-           dy	= 0; */
-    	   yp[0] += ysize;
+    	   yp[0] += ysize; //enables the snake to appear on the opposite place on the screen
        }
     }
     
@@ -125,12 +113,11 @@ public class SnakePanel extends JComponent
         yp[0] += dy;
                 
         // check to see if the snake has hit any walls
-        /* not finished!!!! */
         checkWalls();
        
-        
+        // checks food and generate new if needed
         checkFood();
-        //hi
+        //hi ... hello
         
         // sleep a bit until the next frame
         try { Thread.sleep(delay); } 
