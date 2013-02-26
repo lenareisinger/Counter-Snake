@@ -10,7 +10,7 @@ public class SnakeMain {
 		mainWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		mainWindow.setResizable(false);
 		
-		helloPanel = new SnakePanel();
+		helloPanel = new SnakePanel(mainWindow);
 		mainWindow.getContentPane().add(helloPanel);
         
 		mainWindow.pack();
@@ -23,7 +23,7 @@ public class SnakeMain {
 		// Create an actual instance of HelloBounceApp
 		new SnakeMain();		
 	}
-
+	
 	public static void main(String[] args) {
 		// Schedule a job for the event-dispatching thread:
 		// creating and showing this application's GUI.

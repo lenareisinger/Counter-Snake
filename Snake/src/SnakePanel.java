@@ -18,10 +18,11 @@ public class SnakePanel extends JComponent
     final static BasicStroke stroke = new BasicStroke(2.0f);
       
     // fields
+    JFrame mainWindow;
     float xsize,ysize;  // size of window
     float[] xp = new float[100];	// x position of snake
     float[] yp = new float[100];    // y position of snake
-    int snakeSize = 4;
+    int snakeSize = 6;
     float xlen,ylen;    // size of snake
     float dx,dy;        // current speed + direction of snake 
     boolean start = true;
@@ -30,109 +31,13 @@ public class SnakePanel extends JComponent
     
     int    delay;       // delay between frames in milliseconds
     Thread animThread;  // animation thread                       
-                                       
-    public void paintComponent(Graphics g) {
-        Graphics2D g2 = (Graphics2D) g.create();
-        
-        // get the current window size     
-        Dimension dim = getSize();
-        xsize = dim.width;
-        ysize = dim.height; 
-
-        // clear background to white
-        g2.drawImage(background, 0, 0, null);
-        
-        //draw food
-        g2.setPaint(Color.green);
-        g2.fill(new Rectangle2D.Double(randomNumber1, randomNumber2, xlen, ylen));
-        g2.setColor(Color.black);
-        g2.draw(new Rectangle2D.Double(randomNumber1, randomNumber2, xlen, ylen));
-        
-        for(int i = 0; i<snakeSize; i++) {
-        	if(i==0) {
-        		// draw head
-        		/*
-        		g2.setPaint(Color.red);
-                g2.fill(new Rectangle2D.Double(xp[i], yp[i], xlen, ylen));
-                g2.setColor(Color.black);
-                g2.draw(new Rectangle2D.Double(xp[i], yp[i], xlen, ylen));
-                */
-        		g2.drawImage(head, (int)xp[i], (int)yp[i], null);
-        	}
-        	else {
-        		// draw body
-                g2.setPaint(Color.blue);
-                g2.fill(new Rectangle2D.Double(xp[i], yp[i], xlen, ylen));
-                g2.setColor(Color.black);
-                g2.draw(new Rectangle2D.Double(xp[i], yp[i], xlen, ylen));
-        	}	
-        }
-        
-
-        g2.dispose();
-    }
     
-    // empty methods that are required by the GUI event loop
-    public void componentHidden (ComponentEvent e)  { }
-    public void componentMoved  (ComponentEvent e)  { }
-    public void componentResized(ComponentEvent e)  { }
-    public void componentShown  (ComponentEvent e)  { }
-    
-    public void checkWalls() {    
-       if (xp[0] + xlen > xsize) { 
-    	   xp[0] = 0; //enables the snake to appear on the opposite place on the screen[Angel]   
-       } 
-       if (xp[0] < 0) {
-    	   xp[0] += xsize; //enables the snake to appear on the opposite place on the screen[Angel] 
-       } 
-       if (yp[0] + ylen > ysize) {
-    	   yp[0]=0; //enables the snake to appear on the opposite place on the screen[Angel]
-    	   
-       }             
-       if (yp[0] < 0) {
-    	   yp[0] += ysize; //enables the snake to appear on the opposite place on the screen
-       }
-    }
-    
-    public void checkFood() {
-    	if(xp[0]==randomNumber1 && yp[0]==randomNumber2) {
-            randomNumber1 = (xlen)*Math.round(Math.random()*((xsize/xlen)-1));
-            randomNumber2 = (ylen)*Math.round(Math.random()*((ysize/ylen)-1));
-    		snakeSize++;
-    	}
-    }
-    
-    public void run() {
-      while (true) {  // loop forever          
-        // update position
-        for(int i = snakeSize; i>0; i--) {
-        	xp[i] = xp[i-1];
-        	yp[i] = yp[i-1];
-        }
-    	xp[0] += dx;
-        yp[0] += dy;
-                
-        // check to see if the snake has hit any walls
-        checkWalls();
-       
-        // checks food and generate new if needed
-        checkFood();
-        //hi ... hello
-        
-        // sleep a bit until the next frame
-        try { Thread.sleep(delay); } 
-        catch (InterruptedException e) { 
-        	System.out.println("error");
-        	break;
-        }
-        
-        // refresh the display
-        repaint();  
-      }
-    }
-        
-    public SnakePanel() {
-        //loads background
+    // SnakePanel constructor
+    public SnakePanel(JFrame mw) {
+        //
+    	mainWindow = mw;
+    	
+    	//loads background
     	try {
             background = ImageIO.read(new File("bg1.png"));
             head = ImageIO.read(new File("head.png"));
@@ -171,6 +76,117 @@ public class SnakePanel extends JComponent
         addKeyListener(this);
     }
     
+    public void paintComponent(Graphics g) {
+        Graphics2D g2 = (Graphics2D) g.create();
+        
+        // get the current window size     
+        Dimension dim = getSize();
+        xsize = dim.width;
+        ysize = dim.height; 
+
+        // clear background to white
+        g2.drawImage(background, 0, 0, null);
+        
+        //draw food
+        g2.setPaint(Color.green);
+        g2.fill(new Rectangle2D.Double(randomNumber1, randomNumber2, xlen, ylen));
+        g2.setColor(Color.black);
+        g2.draw(new Rectangle2D.Double(randomNumber1, randomNumber2, xlen, ylen));
+        
+        for(int i = 0; i<snakeSize; i++) {
+        	if(i==0) {
+        		// draw head
+        		/*
+        		g2.setPaint(Color.red);
+                g2.fill(new Rectangle2D.Double(xp[i], yp[i], xlen, ylen));
+                g2.setColor(Color.black);
+                g2.draw(new Rectangle2D.Double(xp[i], yp[i], xlen, ylen));
+                */
+        		g2.drawImage(head, (int)xp[i], (int)yp[i], null);
+        	}
+        	else {
+        		// draw body
+                g2.setPaint(Color.blue);
+                g2.fill(new Rectangle2D.Double(xp[i], yp[i], xlen, ylen));
+                g2.setColor(Color.black);
+                g2.draw(new Rectangle2D.Double(xp[i], yp[i], xlen, ylen));
+        	}	
+        }
+        
+        g2.dispose();
+    }
+    
+    // empty methods that are required by the GUI event loop
+    public void componentHidden (ComponentEvent e)  { }
+    public void componentMoved  (ComponentEvent e)  { }
+    public void componentResized(ComponentEvent e)  { }
+    public void componentShown  (ComponentEvent e)  { }
+    
+    public void checkWalls() {    
+       if (xp[0] + xlen > xsize) { 
+    	   xp[0] = 0; //enables the snake to appear on the opposite place on the screen[Angel]   
+       } 
+       if (xp[0] < 0) {
+    	   xp[0] += xsize; //enables the snake to appear on the opposite place on the screen[Angel] 
+       } 
+       if (yp[0] + ylen > ysize) {
+    	   yp[0]=0; //enables the snake to appear on the opposite place on the screen[Angel]
+    	   
+       }             
+       if (yp[0] < 0) {
+    	   yp[0] += ysize; //enables the snake to appear on the opposite place on the screen
+       }
+    }
+    
+    public void checkSnake() {
+    	for(int i = 1; i<=snakeSize; i++) {
+    		if(xp[0]==xp[i] && yp[0]==yp[i]) {
+    			JOptionPane.showMessageDialog (null, "You are worthless and weak!", "GAME OVER", JOptionPane.ERROR_MESSAGE);
+    			mainWindow.dispose();
+    		}
+    	}
+    }
+    
+    public void checkFood() {
+    	if(xp[0]==randomNumber1 && yp[0]==randomNumber2) {
+            randomNumber1 = (xlen)*Math.round(Math.random()*((xsize/xlen)-1));
+            randomNumber2 = (ylen)*Math.round(Math.random()*((ysize/ylen)-1));
+    		snakeSize++;
+    	}
+    }
+    
+    public void run() {
+      while (true) {  // loop forever          
+        // update position 
+        for(int i = snakeSize; i>0; i--) {
+        	xp[i] = xp[i-1];
+        	yp[i] = yp[i-1];
+        }
+    	xp[0] += dx;
+        yp[0] += dy;
+                
+        // check to see if the snake has hit any walls
+        checkWalls();
+       
+        // checks food and generate new if needed
+        checkFood();
+        
+        // checks whether the snake bites himself or not
+        checkSnake();
+        
+        // sleep a bit until the next frame
+        try { Thread.sleep(delay); } 
+        catch (InterruptedException e) { 
+        	System.out.println("error");
+        	break;
+        }
+        
+        // refresh the display
+        repaint();  
+      }
+    }
+    
+    // finds out if a number is positive or negative
     private static int sign(float a) {
     	if(a>0) {
     		return 1;
