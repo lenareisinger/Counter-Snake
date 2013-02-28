@@ -18,48 +18,53 @@ public class SnakePanel extends JComponent
     final static BasicStroke stroke = new BasicStroke(2.0f);
       
     // fields
-    JFrame mainWindow;
-    float xsize,ysize;  // size of window
+        JFrame mainWindow;
+    float xsize,ysize; // size of window
     float[] xp = new float[100];	// x position of snake
     float[] yp = new float[100];    // y position of snake
+    
+    float[] tx = new float[100];	// x position of snake
+    float[] ty = new float[100];
+    
     int snakeSize = 6;
-    float xlen,ylen;    // size of snake
-    float dx,dy;        // current speed + direction of snake 
+    int blackHoleNumber= 0;
+    float xlen,ylen; // size of snake
+    float dx,dy; // current speed + direction of snake
     boolean start = true;
-    double randomNumber1, randomNumber2;
+    float randomNumber1, randomNumber2, random3, random4, xval, yval, xdif, ydif;
     BufferedImage background, head;
     
-    int    delay;       // delay between frames in milliseconds
-    Thread animThread;  // animation thread                       
+    int delay; // delay between frames in milliseconds
+    Thread animThread; // animation thread
     
     // SnakePanel constructor
     public SnakePanel(JFrame mw) {
         //
-    	mainWindow = mw;
-    	
-    	//loads background
-    	try {
+     mainWindow = mw;
+    
+     //loads background
+     try {
             background = ImageIO.read(new File("bg1.png"));
             head = ImageIO.read(new File("head.png"));
         } catch (IOException e) {
         }
-    	
-    	// set values for all the variables
+    
+     // set values for all the variables
         xsize = 600;
         ysize = 600;
-        xp[0]  = 300;
-        yp[0]  = 300;       
-        xlen  = 20;
-        ylen  = 20;
-        dx    = 0;
-        dy    = 20;
+        xp[0] = 300;
+        yp[0] = 300;
+        xlen = 20;
+        ylen = 20;
+        dx = 0;
+        dy = 20;
         delay = 100;
         randomNumber1 = (xlen)*Math.round(Math.random()*((xsize/xlen)-1));
         randomNumber2 = (ylen)*Math.round(Math.random()*((ysize/ylen)-1));
 
         for(int i = 1; i<snakeSize; i++) {
-        	xp[i] = xp[0]-(i*xlen*sign(dx));
-        	yp[i] = yp[0]-(i*ylen*sign(dy));
+          xp[i] = xp[0]-(i*xlen*sign(dx));
+          yp[i] = yp[0]-(i*ylen*sign(dy));
         }
         
         // set up window properties
@@ -79,10 +84,10 @@ public class SnakePanel extends JComponent
     public void paintComponent(Graphics g) {
         Graphics2D g2 = (Graphics2D) g.create();
         
-        // get the current window size     
+        // get the current window size
         Dimension dim = getSize();
         xsize = dim.width;
-        ysize = dim.height; 
+        ysize = dim.height;
 
         // clear background to white
         g2.drawImage(background, 0, 0, null);
@@ -93,77 +98,110 @@ public class SnakePanel extends JComponent
         g2.setColor(Color.black);
         g2.draw(new Rectangle2D.Double(randomNumber1, randomNumber2, xlen, ylen));
         
+        //draw black holes
+        for (int j=0;j<blackHoleNumber;j++){
+        g2.setPaint(Color.black);
+        g2.fill(new Rectangle2D.Double(tx[j], ty[j], xlen, ylen));
+        }
+        
         for(int i = 0; i<snakeSize; i++) {
-        	if(i==0) {
-        		// draw head
-        		/*
-        		g2.setPaint(Color.red);
-                g2.fill(new Rectangle2D.Double(xp[i], yp[i], xlen, ylen));
-                g2.setColor(Color.black);
-                g2.draw(new Rectangle2D.Double(xp[i], yp[i], xlen, ylen));
-                */
-        		g2.drawImage(head, (int)xp[i], (int)yp[i], null);
-        	}
-        	else {
-        		// draw body
+           if(i==0) {
+              // draw head
+              /*
+		g2.setPaint(Color.red);
+		g2.fill(new Rectangle2D.Double(xp[i], yp[i], xlen, ylen));
+		g2.setColor(Color.black);
+		g2.draw(new Rectangle2D.Double(xp[i], yp[i], xlen, ylen));
+              */
+              g2.drawImage(head, (int)xp[i], (int)yp[i], null);
+              }
+         else {
+             // draw body
                 g2.setPaint(Color.blue);
                 g2.fill(new Rectangle2D.Double(xp[i], yp[i], xlen, ylen));
                 g2.setColor(Color.black);
                 g2.draw(new Rectangle2D.Double(xp[i], yp[i], xlen, ylen));
-        	}	
+                }	
         }
         
         g2.dispose();
     }
     
     // empty methods that are required by the GUI event loop
-    public void componentHidden (ComponentEvent e)  { }
-    public void componentMoved  (ComponentEvent e)  { }
-    public void componentResized(ComponentEvent e)  { }
-    public void componentShown  (ComponentEvent e)  { }
+    public void componentHidden (ComponentEvent e) { }
+    public void componentMoved (ComponentEvent e) { }
+    public void componentResized(ComponentEvent e) { }
+    public void componentShown (ComponentEvent e) { }
     
-    public void checkWalls() {    
-       if (xp[0] + xlen > xsize) { 
-    	   xp[0] = 0; //enables the snake to appear on the opposite place on the screen[Angel]   
-       } 
+    public void checkWalls() {
+       if (xp[0] + xlen > xsize) {
+              xp[0] = 0; //enables the snake to appear on the opposite place on the screen[Angel]
+       }
        if (xp[0] < 0) {
-    	   xp[0] += xsize; //enables the snake to appear on the opposite place on the screen[Angel] 
-       } 
+              xp[0] += xsize; //enables the snake to appear on the opposite place on the screen[Angel]
+       }
        if (yp[0] + ylen > ysize) {
-    	   yp[0]=0; //enables the snake to appear on the opposite place on the screen[Angel]
-    	   
-       }             
+              yp[0]=0; //enables the snake to appear on the opposite place on the screen[Angel]
+    
+       }
        if (yp[0] < 0) {
-    	   yp[0] += ysize; //enables the snake to appear on the opposite place on the screen
+              yp[0] += ysize; //enables the snake to appear on the opposite place on the screen
        }
     }
     
     public void checkSnake() {
-    	for(int i = 1; i<=snakeSize; i++) {
-    		if(xp[0]==xp[i] && yp[0]==yp[i]) {
-    			JOptionPane.showMessageDialog (null, "You are worthless and weak!", "GAME OVER", JOptionPane.ERROR_MESSAGE);
-    			mainWindow.dispose();
-    		}
-    	}
+     for(int i = 1; i<=snakeSize; i++) {
+           if(xp[0]==xp[i] && yp[0]==yp[i]) {
+           JOptionPane.showMessageDialog (null, "You are worthless and weak!", "GAME OVER", JOptionPane.ERROR_MESSAGE);
+           mainWindow.dispose();
+           }
+     }
     }
+    
+    public void checkBlackHole() {
+        for(int i = 0; i<blackHoleNumber; i++) {
+            if(tx[i]==xp[0] && ty[i]==yp[0]) {
+        	xval= xp[0];
+        	yval=yp[0];
+        	random3= (xlen)*Math.round(Math.random()*((xsize/xlen)-1));
+        	random4 = (ylen)*Math.round(Math.random()*((ysize/ylen)-1));
+        	xp[0] = random3;
+                yp[0] = random4;
+        	
+                }
+        }
+       }
     
     public void checkFood() {
-    	if(xp[0]==randomNumber1 && yp[0]==randomNumber2) {
+     if(xp[0]==randomNumber1 && yp[0]==randomNumber2) {
             randomNumber1 = (xlen)*Math.round(Math.random()*((xsize/xlen)-1));
             randomNumber2 = (ylen)*Math.round(Math.random()*((ysize/ylen)-1));
-    		snakeSize++;
-    	}
+     snakeSize++;
+     makeBlackHole();
+     }
     }
     
-    public void run() {
-      while (true) {  // loop forever          
-        // update position 
-        for(int i = snakeSize; i>0; i--) {
-        	xp[i] = xp[i-1];
-        	yp[i] = yp[i-1];
+    public void makeBlackHole() {
+    	if (snakeSize%3==0){
+       	 tx[(snakeSize-6)/3-1] = (xlen)*Math.round(Math.random()*((xsize/xlen)-1));
+       	 ty[(snakeSize-6)/3-1] = (xlen)*Math.round(Math.random()*((xsize/xlen)-1));
+       	 blackHoleNumber += 1;
         }
-    	xp[0] += dx;
+       }
+    
+    public void run() {
+      while (true) { // loop forever
+        // update position
+        for(int i = snakeSize; i>0; i--) {
+         xp[i] = xp[i-1];
+         yp[i] = yp[i-1];
+         
+        
+        }
+     xp[0] += dx;
         yp[0] += dy;
+        
+         
                 
         // check to see if the snake has hit any walls
         checkWalls();
@@ -174,15 +212,17 @@ public class SnakePanel extends JComponent
         // checks whether the snake bites himself or not
         checkSnake();
         
+        checkBlackHole();
+        
         // sleep a bit until the next frame
-        try { Thread.sleep(delay); } 
-        catch (InterruptedException e) { 
-        	System.out.println("error");
-        	break;
+        try { Thread.sleep(delay); }
+        catch (InterruptedException e) {
+         System.out.println("error");
+         break;
         }
         
         // refresh the display
-        repaint();  
+        repaint();
       }
     }
     
