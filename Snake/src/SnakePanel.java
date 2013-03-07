@@ -28,6 +28,7 @@ public class SnakePanel extends JComponent
     
     int snakeSize = 6;
     int blackHoleNumber= 0;
+    int ammunitionsNumber = 5; //number of ammunitions
     float xlen,ylen; // size of snake
     float dx,dy; // current speed + direction of snake
     boolean start = true;
@@ -104,6 +105,10 @@ public class SnakePanel extends JComponent
         g2.fill(new Rectangle2D.Double(tx[j], ty[j], xlen, ylen));
         }
         
+        //draw bullet
+        g2.setPaint(Color.black);
+        g2.fill(new Rectangle2D.Double(xp[0]+xlen, yp[0]+xlen/4, xlen/2, ylen/2));
+        
         for(int i = 0; i<snakeSize; i++) {
            if(i==0) {
               // draw head
@@ -126,6 +131,8 @@ public class SnakePanel extends JComponent
         
         g2.dispose();
     }
+    
+    
     
     // empty methods that are required by the GUI event loop
     public void componentHidden (ComponentEvent e) { }
@@ -248,6 +255,13 @@ public class SnakePanel extends JComponent
 				dy = Math.abs(dx);
 				dx = 0;
 			}
+			/*
+			else { // create_bullet start
+				if(e.getKeyCode()==32){
+						
+				}
+			} // create_bullet ends
+			*/
 		}
 		else {
 			if(e.getKeyCode()==37) {
@@ -259,6 +273,9 @@ public class SnakePanel extends JComponent
 				dy = 0;
 			}
 		}
+		
+		
+		
 	}
 	
 	public void keyReleased(KeyEvent e) {}
