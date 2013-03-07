@@ -152,8 +152,8 @@ public class SnakePanel extends JComponent
     public void checkSnake() {
      for(int i = 1; i<=snakeSize; i++) {
            if(xp[0]==xp[i] && yp[0]==yp[i]) {
-           JOptionPane.showMessageDialog (null, "You are worthless and weak!", "GAME OVER", JOptionPane.ERROR_MESSAGE);
-           mainWindow.dispose();
+        	   mainWindow.dispose();
+        	   JOptionPane.showMessageDialog (null, "You are worthless and weak!", "GAME OVER", JOptionPane.ERROR_MESSAGE);
            }
      }
     }
@@ -190,40 +190,37 @@ public class SnakePanel extends JComponent
        }
     
     public void run() {
-      while (true) { // loop forever
-        // update position
-        for(int i = snakeSize; i>0; i--) {
-         xp[i] = xp[i-1];
-         yp[i] = yp[i-1];
-         
-        
-        }
-     xp[0] += dx;
-        yp[0] += dy;
-        
-         
-                
-        // check to see if the snake has hit any walls
-        checkWalls();
-       
-        // checks food and generate new if needed
-        checkFood();
-        
-        // checks whether the snake bites himself or not
-        checkSnake();
-        
-        checkBlackHole();
-        
-        // sleep a bit until the next frame
-        try { Thread.sleep(delay); }
-        catch (InterruptedException e) {
-         System.out.println("error");
-         break;
-        }
-        
-        // refresh the display
-        repaint();
-      }
+    	while (true) { // loop forever
+    		// update position
+    		for(int i = snakeSize; i>0; i--) {
+    			xp[i] = xp[i-1];
+    			yp[i] = yp[i-1];
+    		}
+    		xp[0] += dx;
+    		yp[0] += dy;
+
+
+    		// check to see if the snake has hit any walls
+    		checkWalls();
+
+    		// checks food and generate new if needed
+    		checkFood();
+
+    		// checks whether the snake bites himself or not
+    		checkSnake();
+
+    		checkBlackHole();
+
+    		// sleep a bit until the next frame
+    		try { Thread.sleep(delay); }
+    		catch (InterruptedException e) {
+    			System.out.println("error");
+    			break;
+    		}
+
+    		// refresh the display
+    		repaint();
+    	}
     }
     
     // finds out if a number is positive or negative
