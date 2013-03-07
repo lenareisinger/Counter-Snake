@@ -32,6 +32,8 @@ implements ComponentListener, KeyListener, Runnable {
 	float xlen,ylen; // size of snake
 	float dx,dy; // current speed + direction of snake
 	boolean start = true;
+	boolean shootActivate = false; // checks if "Space" is hit
+	
 	float randomNumber1, randomNumber2, random3, random4, xval, yval, xdif, ydif;
 	BufferedImage background, head;
 
@@ -59,6 +61,7 @@ implements ComponentListener, KeyListener, Runnable {
 		ylen = 20;
 		dx = 0;
 		dy = 20;
+		
 		delay = 100;
 		randomNumber1 = (xlen)*Math.round(Math.random()*((xsize/xlen)-1));
 		randomNumber2 = (ylen)*Math.round(Math.random()*((ysize/ylen)-1));
@@ -106,14 +109,16 @@ implements ComponentListener, KeyListener, Runnable {
 		}
 
 		//draw static bullet (or call it a pistol:D )
-		g2.setPaint(Color.black);
+		if (shootActivate == true) {
+			g2.setPaint(Color.red);
 		if (dx>0) g2.fill(new Rectangle2D.Double(xp[0]+xlen, yp[0]+ylen/4, xlen/2, ylen/2));
 		else
 			if(dy<0) g2.fill(new Rectangle2D.Double(xp[0]+xlen/4, yp[0]-ylen/2, xlen/2, ylen/2));
 			else 
 				if (dy>0) g2.fill(new Rectangle2D.Double(xp[0]+xlen/4, yp[0]+ylen, xlen/2, ylen/2));
 				else 
-					if (dx<0) g2.fill(new Rectangle2D.Double(xp[0]-xlen/2, yp[0]+ylen/4, xlen/2, ylen/2));
+					if (dx<0) g2.fill(new Rectangle2D.Double(xp[0]-xlen/2, yp[0]+ylen/4, xlen/2, ylen/2)); 
+		}
 		for(int i = 0; i<snakeSize; i++) {
 						if(i==0) {
 							// draw head
@@ -260,14 +265,11 @@ implements ComponentListener, KeyListener, Runnable {
 				dy = Math.abs(dx);
 				dx = 0;
 			}
-			/*
-			else { // create_bullet start
-				if(e.getKeyCode()==32){
-
+			if (e.getKeyCode()==32) {
+				shootActivate = true;
+				ammunitionsNumber--;
 				}
-			} // create_bullet ends
-			 */
-		}
+					}
 		else {
 			if(e.getKeyCode()==37) {
 				dx = -1*Math.abs(dy);
