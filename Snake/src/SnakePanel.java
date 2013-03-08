@@ -28,12 +28,16 @@ implements ComponentListener, KeyListener, Runnable {
 
 	int snakeSize = 6;
 	int blackHoleNumber= 0;
-	int ammunitionsNumber = 5; //number of ammunitions
 	float xlen,ylen; // size of snake
 	float dx,dy; // current speed + direction of snake
 	boolean start = true;
+
 	boolean shootActivate = false; // checks if "Space" is hit
-	
+	int ammunitionsNumber; //number of ammunitions
+	float speedBx, speedBy;
+
+	float xb,yb; //coordinates of bullet;
+
 	float randomNumber1, randomNumber2, random3, random4, xval, yval, xdif, ydif;
 	BufferedImage background, head;
 
@@ -61,8 +65,10 @@ implements ComponentListener, KeyListener, Runnable {
 		ylen = 20;
 		dx = 0;
 		dy = 20;
-		
+
 		delay = 100;
+
+
 		randomNumber1 = (xlen)*Math.round(Math.random()*((xsize/xlen)-1));
 		randomNumber2 = (ylen)*Math.round(Math.random()*((ysize/ylen)-1));
 
@@ -84,6 +90,8 @@ implements ComponentListener, KeyListener, Runnable {
 
 		addKeyListener(this);
 	}
+
+
 
 	public void paintComponent(Graphics g) {
 		Graphics2D g2 = (Graphics2D) g.create();
@@ -108,36 +116,35 @@ implements ComponentListener, KeyListener, Runnable {
 			g2.fill(new Rectangle2D.Double(tx[j], ty[j], xlen, ylen));
 		}
 
-		//draw static bullet (or call it a pistol:D )
+		//draw static bullet (or call it a pistol:D )I'll create a function "draw" of the class Bullet soon
 		if (shootActivate == true) {
 			g2.setPaint(Color.red);
-		if (dx>0) g2.fill(new Rectangle2D.Double(xp[0]+xlen, yp[0]+ylen/4, xlen/2, ylen/2));
-		else
-			if(dy<0) g2.fill(new Rectangle2D.Double(xp[0]+xlen/4, yp[0]-ylen/2, xlen/2, ylen/2));
-			else 
-				if (dy>0) g2.fill(new Rectangle2D.Double(xp[0]+xlen/4, yp[0]+ylen, xlen/2, ylen/2));
-				else 
-					if (dx<0) g2.fill(new Rectangle2D.Double(xp[0]-xlen/2, yp[0]+ylen/4, xlen/2, ylen/2)); 
+			if (shootActivate == true) { //creates a bullet
+				g2.fill(new Rectangle2D.Double(xb, yb, xlen/2, ylen/2));
+			}
+			
+			
+				
 		}
 		for(int i = 0; i<snakeSize; i++) {
-						if(i==0) {
-							// draw head
-							/*
+			if(i==0) {
+				// draw head
+				/*
 		g2.setPaint(Color.red);
 		g2.fill(new Rectangle2D.Double(xp[i], yp[i], xlen, ylen));
 		g2.setColor(Color.black);
 		g2.draw(new Rectangle2D.Double(xp[i], yp[i], xlen, ylen));
-							 */
-							g2.drawImage(head, (int)xp[i], (int)yp[i], null);
-						}
-						else {
-							// draw body
-							g2.setPaint(Color.blue);
-							g2.fill(new Rectangle2D.Double(xp[i], yp[i], xlen, ylen));
-							g2.setColor(Color.black);
-							g2.draw(new Rectangle2D.Double(xp[i], yp[i], xlen, ylen));
-						}	
-					}
+				 */
+				g2.drawImage(head, (int)xp[i], (int)yp[i], null);
+			}
+			else {
+				// draw body
+				g2.setPaint(Color.blue);
+				g2.fill(new Rectangle2D.Double(xp[i], yp[i], xlen, ylen));
+				g2.setColor(Color.black);
+				g2.draw(new Rectangle2D.Double(xp[i], yp[i], xlen, ylen));
+			}	
+		}
 
 		g2.dispose();
 	}
@@ -171,6 +178,7 @@ implements ComponentListener, KeyListener, Runnable {
 			if(xp[0]==xp[i] && yp[0]==yp[i]) {
 				mainWindow.dispose();
 				JOptionPane.showMessageDialog (null, "You are worthless and weak!", "GAME OVER", JOptionPane.ERROR_MESSAGE);
+				break; // panel appears only once
 			}
 		}
 	}
@@ -205,7 +213,7 @@ implements ComponentListener, KeyListener, Runnable {
 			blackHoleNumber += 1;
 		}
 	}
-
+		
 	public void run() {
 		while (true) { // loop forever
 			// update position
@@ -215,7 +223,6 @@ implements ComponentListener, KeyListener, Runnable {
 			}
 			xp[0] += dx;
 			yp[0] += dy;
-
 
 			// check to see if the snake has hit any walls
 			checkWalls();
@@ -228,6 +235,10 @@ implements ComponentListener, KeyListener, Runnable {
 
 			checkBlackHole();
 
+			//shoot();
+			xb += speedBx;
+			yb += speedBy;
+
 			// sleep a bit until the next frame
 			try { Thread.sleep(delay); }
 			catch (InterruptedException e) {
@@ -239,6 +250,8 @@ implements ComponentListener, KeyListener, Runnable {
 			repaint();
 		}
 	}
+
+
 
 	// finds out if a number is positive or negative
 	private static int sign(float a) {
@@ -256,6 +269,28 @@ implements ComponentListener, KeyListener, Runnable {
 	}
 
 	public void keyPressed(KeyEvent e) {
+		if (e.getKeyCode()==32) { //space
+			shootActivate = true;
+			ammunitionsNumber--;
+			speedBx = 2*dx;
+			speedBy = 2*dy;
+			if (dx>0) {
+				xb = xp[0]+xlen;
+				yb = yp[0]+ylen/4;
+			} 
+			else if ( dx !=0 ) {
+				xb = xp[0]-xlen/2;
+				yb = yp[0]+ylen/4;
+			} 
+			if(dy<0) {
+				xb = xp[0]+xlen/4;
+				yb = yp[0]+ylen/2;
+			}
+			else if ( dy != 0 ){ 						
+				xb = xp[0]+xlen/4;
+				yb = yp[0] + ylen;
+			}			
+		} //space ends
 		if(dx!=0) {
 			if(e.getKeyCode()==38) {
 				dy = -1*Math.abs(dx);
@@ -265,11 +300,7 @@ implements ComponentListener, KeyListener, Runnable {
 				dy = Math.abs(dx);
 				dx = 0;
 			}
-			if (e.getKeyCode()==32) {
-				shootActivate = true;
-				ammunitionsNumber--;
-				}
-					}
+		}
 		else {
 			if(e.getKeyCode()==37) {
 				dx = -1*Math.abs(dy);
