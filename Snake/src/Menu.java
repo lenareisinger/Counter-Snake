@@ -7,6 +7,7 @@ public class Menu extends JFrame implements ActionListener {
 	/**
 	 * 
 	 */
+	
 	private static final long serialVersionUID = 1L;
 	JButton		start;
 	Container	cont;
