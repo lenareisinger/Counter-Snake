@@ -210,13 +210,14 @@ implements ComponentListener, KeyListener, Runnable {
 	
 	public void checkCollision(){
 		
-		for(int i = 1; i<=snakeSize; i++) {
+		for(int i = 0; i<snakeSize2; i++) {
 			if(player1.getArrX()[0]==player2.getArrX()[i] && player1.getArrY()[0]==player2.getArrY()[i]) {
 				mainWindow.dispose();
 				JOptionPane.showMessageDialog (null, "Blue Snake loses!", "GAME OVER", JOptionPane.ERROR_MESSAGE);
 			    alive=false;
 			    }
-			
+		}
+		for(int i = 0; i<snakeSize; i++) {
 			if(player2.getArrX()[0]==player1.getArrX()[i] && player2.getArrY()[0]==player1.getArrY()[i]) {
 				mainWindow.dispose();
 				JOptionPane.showMessageDialog (null, "Red Snake loses!", "GAME OVER", JOptionPane.ERROR_MESSAGE);
