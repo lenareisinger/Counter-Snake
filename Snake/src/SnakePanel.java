@@ -23,16 +23,21 @@ implements ComponentListener, KeyListener, Runnable {
 	float xsize,ysize; // size of window
 	float[] xp = new float[100];	// x position of snake    // WE CAN DELETE THIS, but its still used in angels shooting...
 	float[] yp = new float[100];    // y position of snake
-
+	float[] xp2 = new float[100];	// x position of snake    // WE CAN DELETE THIS, but its still used in angels shooting...
+	float[] yp2 = new float[100];
 	float[] tx = new float[100];	// x position of snake
 	float[] ty = new float[100];
 
 	SnakeHead player1;
+	SnakeHead player2;
 	int snakeSize = 10;
+	int snakeSize2=10;
 	int blackHoleNumber= 0;
+	int foodCount=0;
 	float xlen,ylen; // size of snake
-	float dx,dy; // current speed + direction of snake
+	float dx,dy, dx2, dy2; // current speed + direction of snake
 	boolean start = true;
+	float xp0, yp0, yp20, xp20;
 
 	boolean shootActivate = false; // checks if "Space" is hit
 	int ammunitionsNumber; //number of ammunitions
@@ -66,6 +71,13 @@ implements ComponentListener, KeyListener, Runnable {
 		ylen = 20;
 		dx = 0;
 		dy = 20;
+		xp0=200;
+		yp0=300;
+		xp20=400;
+		yp20=300;
+		
+		dx2 = 0;
+		dy2 = 20;
 
 		delay = 100;
 
@@ -73,11 +85,17 @@ implements ComponentListener, KeyListener, Runnable {
 		randomNumber1 = (xlen)*Math.round(Math.random()*((xsize/xlen)-1));
 		randomNumber2 = (ylen)*Math.round(Math.random()*((ysize/ylen)-1));
 
-		player1 = new SnakeHead(snakeSize);
-		player1.setPos(player1.first, 300, 300, dx, dy);
+		player1 = new SnakeHead(snakeSize, xp0, yp0);
+		player1.setPos(player1.first, xp0, yp0, dx, dy);
+		
+		player2 = new SnakeHead(snakeSize2, xp20, yp20);
+		player2.setPos(player2.first, xp20, yp20, dx2, dy2);
 		
 		xp = getArrX();
 		yp = getArrY();
+		
+		xp2 = getArrX2();
+		yp2 = getArrY2();
 
 		// set up window properties
 		setBackground(Color.white);
@@ -148,9 +166,30 @@ implements ComponentListener, KeyListener, Runnable {
 				g2.draw(new Rectangle2D.Double((int)player1.getArrX()[i], (int)player1.getArrY()[i], xlen, ylen));
 			}	
 		}
+		for(int i = 0; i<snakeSize2; i++) {
+			if(i==0) {
+				// draw head
+				/*
+		g2.setPaint(Color.red);
+		g2.fill(new Rectangle2D.Double(xp[i], yp[i], xlen, ylen));
+		g2.setColor(Color.black);
+		g2.draw(new Rectangle2D.Double(xp[i], yp[i], xlen, ylen));
+				 */
+				g2.drawImage(head, (int)player2.getX(), (int)player2.getY(), null);
+			}
+			else {
+				// draw body
+				g2.setPaint(Color.red);
+				g2.fill(new Rectangle2D.Double((int)player2.getArrX()[i], (int)player2.getArrY()[i], xlen, ylen));
+				g2.setColor(Color.black);
+				g2.draw(new Rectangle2D.Double((int)player2.getArrX()[i], (int)player2.getArrY()[i], xlen, ylen));
+			}	
+		}
 
 		g2.dispose();
 	}
+	
+	
 
 
 
@@ -160,62 +199,31 @@ implements ComponentListener, KeyListener, Runnable {
 	public void componentResized(ComponentEvent e) { }
 	public void componentShown (ComponentEvent e) { }
 
-	public void checkWalls() {
-		if (player1.getX() + xlen > xsize) {
-			player1.setX(0); //enables the snake to appear on the opposite place on the screen[Angel]
-		}
-		if (player1.getX() < 0) {
-			player1.setX(player1.getX() + xsize); //enables the snake to appear on the opposite place on the screen[Angel]
-		}
-		if (player1.getY() + ylen > ysize) {
-			player1.setY(0); //enables the snake to appear on the opposite place on the screen[Angel]
-
-		}
-		if (player1.getY() < 0) {
-			player1.setY(player1.getY() + ysize); //enables the snake to appear on the opposite place on the screen
-		}
-	}
-
-	public void checkSnake() {
-		for(int i = 1; i<=snakeSize; i++) {
-			if(player1.getArrX()[0]==player1.getArrX()[i] && player1.getArrY()[0]==player1.getArrY()[i]) {
-				mainWindow.dispose();
-				JOptionPane.showMessageDialog (null, "You are worthless and weak!", "GAME OVER", JOptionPane.ERROR_MESSAGE); 
-				alive = false; // panel appears only once
-			}
-		}
-	}
-
-	public void checkBlackHole() {
-		for(int i = 0; i<blackHoleNumber; i++) {
-			if(tx[i]==player1.getArrX()[0] && ty[i]==player1.getArrY()[0]) {
-				xval= player1.getArrX()[0];
-				yval= player1.getArrY()[0];
-				random3= (xlen)*Math.round(Math.random()*((xsize/xlen)-1));
-				random4 = (ylen)*Math.round(Math.random()*((ysize/ylen)-1));
-				player1.setX(random3);
-				player1.setY(random4);
-
-			}
-		}
-	}
-
-	public void checkFood() {
-		if(player1.getArrX()[0]==randomNumber1 && player1.getArrY()[0]==randomNumber2) {
-			randomNumber1 = (xlen)*Math.round(Math.random()*((xsize/xlen)-1));
-			randomNumber2 = (ylen)*Math.round(Math.random()*((ysize/ylen)-1));
-			snakeSize++;
-			player1.incSize();
-			makeBlackHole();
-		}
-	}
 
 	public void makeBlackHole() {
-		if (snakeSize%3==0){
-			tx[(snakeSize-6)/3-1] = (xlen)*Math.round(Math.random()*((xsize/xlen)-1));
-			ty[(snakeSize-6)/3-1] = (xlen)*Math.round(Math.random()*((xsize/xlen)-1));
+		if (foodCount%3==0){
+			tx[(foodCount)/3] = (xlen)*Math.round(Math.random()*((xsize/xlen)-1));
+			ty[(foodCount)/3] = (xlen)*Math.round(Math.random()*((xsize/xlen)-1));
 			blackHoleNumber += 1;
 		}
+	}
+	
+	public void checkCollision(){
+		
+		for(int i = 1; i<=snakeSize; i++) {
+			if(player1.getArrX()[0]==player2.getArrX()[i] && player1.getArrY()[0]==player2.getArrY()[i]) {
+				mainWindow.dispose();
+				JOptionPane.showMessageDialog (null, "Blue Snake loses!", "GAME OVER", JOptionPane.ERROR_MESSAGE);
+			    alive=false;
+			    }
+			
+			if(player2.getArrX()[0]==player1.getArrX()[i] && player2.getArrY()[0]==player1.getArrY()[i]) {
+				mainWindow.dispose();
+				JOptionPane.showMessageDialog (null, "Red Snake loses!", "GAME OVER", JOptionPane.ERROR_MESSAGE);
+			    alive=false;
+			    }
+			}
+			
 	}
 		
 	public void run() {
@@ -234,18 +242,48 @@ implements ComponentListener, KeyListener, Runnable {
 			player1.setY(player1.getY()+dy);
 			player1.first.setPos(player1.getX()-dx, player1.getY()-dy);
 			player1.setPos(player1.first);
+			
+			player2.setX(player2.getX()+dx2);
+			player2.setY(player2.getY()+dy2);
+			player2.first.setPos(player2.getX()-dx2, player2.getY()-dy2);
+			player2.setPos(player2.first);
 
 			// check to see if the snake has hit any walls
-			checkWalls();
+			player1.checkWalls(xlen, xsize, ylen, ysize);
+			player2.checkWalls(xlen, xsize, ylen, ysize);
 
 			// checks food and generate new if needed
-			checkFood();
-
+			if (player1.checkFood(randomNumber1, randomNumber2, xsize, ysize, xlen, ylen)){
+			randomNumber1 = (xlen)*Math.round(Math.random()*((xsize/xlen)-1));
+			randomNumber2 = (ylen)*Math.round(Math.random()*((ysize/ylen)-1));
+			makeBlackHole();
+			snakeSize++;
+			foodCount++;
+			player1.incSize();
+			}
+			
+			if (player2.checkFood(randomNumber1, randomNumber2, xsize, ysize, xlen, ylen)){
+				randomNumber1 = (xlen)*Math.round(Math.random()*((xsize/xlen)-1));
+				randomNumber2 = (ylen)*Math.round(Math.random()*((ysize/ylen)-1));
+				makeBlackHole();
+				snakeSize2++;
+				foodCount++;
+				player2.incSize();
+				}
 			// checks whether the snake bites himself or not
-			checkSnake();
+			if (player1.checkSnake(alive)==false){
+				mainWindow.dispose();
+				JOptionPane.showMessageDialog (null, "You are worthless and weak!", "GAME OVER", JOptionPane.ERROR_MESSAGE);
+			}
+			if (player2.checkSnake(alive)==false){
+				mainWindow.dispose();
+				JOptionPane.showMessageDialog (null, "You are worthless and weak!", "GAME OVER", JOptionPane.ERROR_MESSAGE);
+			}
 
-			checkBlackHole();
+			player1.checkBlackHole(blackHoleNumber, tx, ty, xval, yval, xlen, ylen, xsize, ysize);
+			player2.checkBlackHole(blackHoleNumber, tx, ty, xval, yval, xlen, ylen, xsize, ysize);
 
+			checkCollision();
 			//shoot();
 			xb += speedBx;
 			yb += speedBy;
@@ -323,6 +361,27 @@ implements ComponentListener, KeyListener, Runnable {
 				dy = 0;
 			}
 		}
+		
+		if(dx2!=0) {
+			if(e.getKeyCode()==87) {
+				dy2 = -1*Math.abs(dx2);
+				dx2 = 0;
+			}
+			if(e.getKeyCode()==83) {
+				dy2 = Math.abs(dx2);
+				dx2 = 0;
+			}
+		}
+		else {
+			if(e.getKeyCode()==65) {
+				dx2 = -1*Math.abs(dy2);
+				dy2 = 0;
+			}
+			if(e.getKeyCode()==68) {
+				dx2 = Math.abs(dy2);
+				dy2 = 0;
+			}
+		}
 
 
 
@@ -335,7 +394,13 @@ implements ComponentListener, KeyListener, Runnable {
 	public float[] getArrY() {
 		return player1.getArrY();
 	}
-
+	public float[] getArrX2() {
+		return player2.getArrX();
+	}
+	
+	public float[] getArrY2() {
+		return player2.getArrY();
+	}
 	public void keyReleased(KeyEvent e) {}
 	public void keyTyped(KeyEvent e) {}
 }
