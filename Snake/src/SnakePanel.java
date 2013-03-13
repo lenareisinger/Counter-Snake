@@ -362,7 +362,7 @@ implements ComponentListener, KeyListener, Runnable {
 				dy = 0;
 			}
 		}
-		
+		//control second snake with a,s,d,w keys
 		if(dx2!=0) {
 			if(e.getKeyCode()==87) {
 				dy2 = -1*Math.abs(dx2);
