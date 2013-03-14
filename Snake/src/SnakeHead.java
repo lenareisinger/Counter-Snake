@@ -112,7 +112,7 @@ public class SnakeHead {
 	public boolean checkSnake(boolean alive) {
 		for(int i = 1; i<=snakeSize; i++) {
 			if(getArrX()[0]==getArrX()[i] && getArrY()[0]==getArrY()[i]) { 
-			 alive = false; // panel appears only once
+			 alive = false;
 			}
 		}
 		return alive;		
