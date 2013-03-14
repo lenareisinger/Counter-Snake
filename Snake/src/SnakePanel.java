@@ -13,14 +13,14 @@ public class SnakePanel extends JComponent
 implements ComponentListener, KeyListener, Runnable {
 
 	final static long serialVersionUID = 0;  // kill warning
+	final static BasicStroke stroke = new BasicStroke(2.0f); // constants
 
-	// constants
-	final static BasicStroke stroke = new BasicStroke(2.0f);
-
-	// fields
 	boolean alive;
 	JFrame mainWindow;
 	float xsize,ysize; // size of window
+	
+	boolean readyToMove1 = true;
+	boolean readyToMove2 = true;
 	
 	float[] xp = new float[100];	// x position of snake    // WE CAN DELETE THIS, but its still used in angels shooting...
 	float[] yp = new float[100];    // y position of snake
@@ -267,6 +267,10 @@ implements ComponentListener, KeyListener, Runnable {
 				break;
 			}
 
+			// make snakes available to move
+			readyToMove1 = true;
+			readyToMove2 = true;
+			
 			// refresh the display
 			repaint();
 		}
@@ -298,45 +302,53 @@ implements ComponentListener, KeyListener, Runnable {
 		
 		//control first snake with arrow keys
 		if(dx!=0) {
-			if(e.getKeyCode()==38) {
+			if(e.getKeyCode()==38 && readyToMove1) {
 				dy = -1*Math.abs(dx);
 				dx = 0;
+				readyToMove1 = false;
 			}
-			if(e.getKeyCode()==40) {
+			if(e.getKeyCode()==40 && readyToMove1) {
 				dy = Math.abs(dx);
 				dx = 0;
+				readyToMove1 = false;
 			}
 		}
 		else {
-			if(e.getKeyCode()==37) {
+			if(e.getKeyCode()==37 && readyToMove1) {
 				dx = -1*Math.abs(dy);
 				dy = 0;
+				readyToMove1 = false;
 			}
-			if(e.getKeyCode()==39) {
+			if(e.getKeyCode()==39 && readyToMove1) {
 				dx = Math.abs(dy);
 				dy = 0;
+				readyToMove1 = false;
 			}
 		}
 		
 		//control second snake with a,s,d,w keys
 		if(dx2!=0) {
-			if(e.getKeyCode()==87) {
+			if(e.getKeyCode()==87 && readyToMove2) {
 				dy2 = -1*Math.abs(dx2);
 				dx2 = 0;
+				readyToMove2 = false;
 			}
-			if(e.getKeyCode()==83) {
+			if(e.getKeyCode()==83 && readyToMove2) {
 				dy2 = Math.abs(dx2);
 				dx2 = 0;
+				readyToMove2 = false;
 			}
 		}
 		else {
-			if(e.getKeyCode()==65) {
+			if(e.getKeyCode()==65 && readyToMove2) {
 				dx2 = -1*Math.abs(dy2);
 				dy2 = 0;
+				readyToMove2 = false;
 			}
-			if(e.getKeyCode()==68) {
+			if(e.getKeyCode()==68 && readyToMove2) {
 				dx2 = Math.abs(dy2);
 				dy2 = 0;
+				readyToMove2 = false;
 			}
 		}
 	}
