@@ -32,8 +32,7 @@ implements ComponentListener, KeyListener, Runnable {
 
 	SnakeHead player1;
 	SnakeHead player2;
-	int snakeSize = 8;
-	int snakeSize2= 8;
+	int initialSize = 8;
 	int blackHoleNumber = 0;
 	int foodCount = 0;
 	float xlen,ylen; // size of snake
@@ -61,7 +60,7 @@ implements ComponentListener, KeyListener, Runnable {
 
 		//loads background
 		try {
-			background = ImageIO.read(new File("bg4.png"));
+			background = ImageIO.read(new File("bg3.png"));
 			headB = ImageIO.read(new File("headBlue.png"));
 			headR = ImageIO.read(new File("headRed.png"));
 		} catch (IOException e) {
@@ -87,10 +86,10 @@ implements ComponentListener, KeyListener, Runnable {
 		randomNumber1 = (xlen)*Math.round(Math.random()*((xsize/xlen)-1));
 		randomNumber2 = (ylen)*Math.round(Math.random()*((ysize/ylen)-1));
 
-		player1 = new SnakeHead(snakeSize, xp0, yp0);
+		player1 = new SnakeHead(initialSize, xp0, yp0);
 		player1.setPos(player1.first, xp0, yp0, dx, dy);
 		
-		player2 = new SnakeHead(snakeSize2, xp20, yp20);
+		player2 = new SnakeHead(initialSize, xp20, yp20);
 		player2.setPos(player2.first, xp20, yp20, dx2, dy2);
 		
 		xp = player1.getArrX();
@@ -145,13 +144,13 @@ implements ComponentListener, KeyListener, Runnable {
 		}
 
 		// draw bodies
-		for(int i = 1; i<snakeSize; i++) {
+		for(int i = 1; i<player1.getSize(); i++) {
 			g2.setPaint(Color.blue);
 			g2.fill(new Rectangle2D.Double((int)player1.getArrX()[i], (int)player1.getArrY()[i], xlen, ylen));
 			g2.setColor(Color.black);
 			g2.draw(new Rectangle2D.Double((int)player1.getArrX()[i], (int)player1.getArrY()[i], xlen, ylen));
 		}
-		for(int i = 1; i<snakeSize2; i++) {
+		for(int i = 1; i<player2.getSize(); i++) {
 			g2.setPaint(Color.red);
 			g2.fill(new Rectangle2D.Double((int)player2.getArrX()[i], (int)player2.getArrY()[i], xlen, ylen));
 			g2.setColor(Color.black);
@@ -181,7 +180,7 @@ implements ComponentListener, KeyListener, Runnable {
 	
 	public void checkCollision(){
 		
-		for(int i = 0; i<snakeSize2; i++) {
+		for(int i = 0; i<player2.getSize(); i++) {
 			if(player1.getArrX()[0]==player2.getArrX()[i] && player1.getArrY()[0]==player2.getArrY()[i]) {
 				JOptionPane.showMessageDialog (null, "Red Snake loses!", "GAME OVER", JOptionPane.ERROR_MESSAGE);
 				mainWindow.dispose();
@@ -190,7 +189,7 @@ implements ComponentListener, KeyListener, Runnable {
 			    }
 		}
 		if(alive) {
-			for(int i = 0; i<snakeSize; i++) {
+			for(int i = 0; i<player1.getSize(); i++) {
 				if(player2.getArrX()[0]==player1.getArrX()[i] && player2.getArrY()[0]==player1.getArrY()[i]) {
 					JOptionPane.showMessageDialog (null, "Blue Snake loses!", "GAME OVER", JOptionPane.ERROR_MESSAGE);
 					mainWindow.dispose();
@@ -223,7 +222,6 @@ implements ComponentListener, KeyListener, Runnable {
 				randomNumber1 = (xlen)*Math.round(Math.random()*((xsize/xlen)-1));
 				randomNumber2 = (ylen)*Math.round(Math.random()*((ysize/ylen)-1));
 				makeBlackHole();
-				snakeSize++;
 				foodCount++;
 				player1.incSize();
 			}
@@ -232,7 +230,6 @@ implements ComponentListener, KeyListener, Runnable {
 				randomNumber1 = (xlen)*Math.round(Math.random()*((xsize/xlen)-1));
 				randomNumber2 = (ylen)*Math.round(Math.random()*((ysize/ylen)-1));
 				makeBlackHole();
-				snakeSize2++;
 				foodCount++;
 				player2.incSize();
 			}
