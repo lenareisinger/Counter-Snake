@@ -1,17 +1,17 @@
 import javax.swing.*;
 
 public class SnakeMain {
-	JFrame      mainWindow;
-	SnakePanel helloPanel;
+	JFrame     mainWindow;
+	SnakePanel snakePanel;
 	
-	// Create a new window, and put helloPanel inside it.
+	// Create a new window, and put snakePanel inside it.
 	public SnakeMain() {
 		mainWindow = new JFrame("Counter-Snake");
 		mainWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		mainWindow.setResizable(false);
 		
-		helloPanel = new SnakePanel(mainWindow);
-		mainWindow.getContentPane().add(helloPanel);
+		snakePanel = new SnakePanel(mainWindow);
+		mainWindow.getContentPane().add(snakePanel);
         
 		mainWindow.pack();
 		mainWindow.setVisible(true);
@@ -20,7 +20,7 @@ public class SnakeMain {
 	private static void createAndShowGUI() {
 		// Make sure we have nice window decorations.
 		JFrame.setDefaultLookAndFeelDecorated(true);
-		// Create an actual instance of HelloBounceApp
+		// Create an actual instance of SnakeMain
 		new SnakeMain();		
 	}
 	
