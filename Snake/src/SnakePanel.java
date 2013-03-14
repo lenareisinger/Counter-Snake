@@ -18,15 +18,15 @@ implements ComponentListener, KeyListener, Runnable {
 	boolean alive;
 	JFrame mainWindow;
 	float xsize,ysize; // size of window
-	
+
 	boolean readyToMove1 = true;
 	boolean readyToMove2 = true;
-	
+
 	float[] xp = new float[100];	// x position of snake    // WE CAN DELETE THIS, but its still used in angels shooting...
 	float[] yp = new float[100];    // y position of snake
 	float[] xp2 = new float[100];	// x position of snake    // WE CAN DELETE THIS, but its still used in angels shooting...
 	float[] yp2 = new float[100];
-	
+
 	float[] tx = new float[100];	// x position of blackhole
 	float[] ty = new float[100];	// y position of blackhole
 
@@ -40,8 +40,10 @@ implements ComponentListener, KeyListener, Runnable {
 	boolean start = true;
 	float xp0, yp0, yp20, xp20;
 
-	boolean shootActivate = false; // checks if "Space" is hit
-	int ammunitionsNumber; //number of ammunitions
+	boolean shootActivate1 = false; // checks if trigger key 1 is hit
+	boolean shootActivate2 = false; // check if trigger key 2 is hit
+	int ammunitionsNumber1, ammunitionsNumber2; //number of ammunitions
+	int bulletNum1, bulletNum2;
 	float speedBx, speedBy;
 
 	float xb,yb; //coordinates of bullet;
@@ -77,7 +79,7 @@ implements ComponentListener, KeyListener, Runnable {
 		yp0=300;
 		xp20=400;
 		yp20=300;
-		
+
 		dx2 = 0;
 		dy2 = -20;
 
@@ -88,13 +90,13 @@ implements ComponentListener, KeyListener, Runnable {
 
 		player1 = new SnakeHead(initialSize, xp0, yp0);
 		player1.setPos(player1.first, xp0, yp0, dx, dy);
-		
+
 		player2 = new SnakeHead(initialSize, xp20, yp20);
 		player2.setPos(player2.first, xp20, yp20, dx2, dy2);
-		
+
 		xp = player1.getArrX();
 		yp = player1.getArrY();
-		
+
 		xp2 = player2.getArrX();
 		yp2 = player2.getArrY();
 
@@ -104,6 +106,11 @@ implements ComponentListener, KeyListener, Runnable {
 		setPreferredSize(new Dimension((int) xsize, (int) ysize));
 		setFocusable(true);
 		addComponentListener(this);
+
+		bulletNum1 = 5; //initial number of bullets for player1
+		bulletNum2 = 5; //initial number of bullets for player2
+		ammunitionsNumber1 = bulletNum1;
+		ammunitionsNumber2 = bulletNum2;
 
 		// start the animation thread
 		animThread = new Thread(this);
@@ -135,12 +142,21 @@ implements ComponentListener, KeyListener, Runnable {
 			g2.fill(new Rectangle2D.Double(tx[j], ty[j], xlen, ylen));
 		}
 
-		//draw static bullet (or call it a pistol:D )I'll create a function "draw" of the class Bullet soon
-		if (shootActivate == true) {
+		if (shootActivate1 == true) { //drawing bullets for the first player
 			g2.setPaint(Color.red);
-			if (shootActivate == true) { //creates a bullet
-				g2.fill(new Rectangle2D.Double(xb, yb, xlen/2, ylen/2));
-			}		
+			for (Bullet b : player1.bullets){
+				if (b.isShot) { //draws a bullet
+					g2.fill(new Rectangle2D.Double(b.getX(), b.getY(), xlen/2, ylen/2));
+				}
+			}
+		}
+		if (shootActivate2 == true) { //drawing bullets for the second player
+			g2.setPaint(Color.red);
+			for (Bullet b : player2.bullets){
+				if (b.isShot) { //draws a bullet
+					g2.fill(new Rectangle2D.Double(b.getX(), b.getY(), xlen/2, ylen/2));
+				}
+			}
 		}
 
 		// draw bodies
@@ -163,7 +179,7 @@ implements ComponentListener, KeyListener, Runnable {
 
 		g2.dispose();
 	}
-	
+
 	// empty methods that are required by the GUI event loop
 	public void componentHidden (ComponentEvent e) { }
 	public void componentMoved (ComponentEvent e) { }
@@ -177,16 +193,16 @@ implements ComponentListener, KeyListener, Runnable {
 			blackHoleNumber += 1;
 		}
 	}
-	
+
 	public void checkCollision(){
-		
+
 		for(int i = 0; i<player2.getSize(); i++) {
 			if(player1.getArrX()[0]==player2.getArrX()[i] && player1.getArrY()[0]==player2.getArrY()[i]) {
 				JOptionPane.showMessageDialog (null, "Red Snake loses!", "GAME OVER", JOptionPane.ERROR_MESSAGE);
 				mainWindow.dispose();
 				alive=false;
-			    break;
-			    }
+				break;
+			}
 		}
 		if(alive) {
 			for(int i = 0; i<player1.getSize(); i++) {
@@ -199,7 +215,7 @@ implements ComponentListener, KeyListener, Runnable {
 			}
 		}
 	}
-		
+
 	public void run() {
 		while (alive) { // loop while both snakes are alive
 			//update positions
@@ -207,7 +223,7 @@ implements ComponentListener, KeyListener, Runnable {
 			player1.setY(player1.getY()+dy);
 			player1.first.setPos(player1.getX()-dx, player1.getY()-dy);
 			player1.setPos(player1.first);
-			
+
 			player2.setX(player2.getX()+dx2);
 			player2.setY(player2.getY()+dy2);
 			player2.first.setPos(player2.getX()-dx2, player2.getY()-dy2);
@@ -253,9 +269,10 @@ implements ComponentListener, KeyListener, Runnable {
 			player2.checkBlackHole(blackHoleNumber, tx, ty, xval, yval, xlen, ylen, xsize, ysize);
 
 			checkCollision();
-			//shoot();
-			xb += speedBx;
-			yb += speedBy;
+
+			//shoot
+			for (Bullet b: player1.bullets) b.move();
+			for (Bullet b: player2.bullets) b.move();
 
 			// sleep a bit until the next frame
 			try { Thread.sleep(delay); }
@@ -267,37 +284,44 @@ implements ComponentListener, KeyListener, Runnable {
 			// make snakes available to move
 			readyToMove1 = true;
 			readyToMove2 = true;
-			
+
 			// refresh the display
 			repaint();
 		}
 	}
 
 	public void keyPressed(KeyEvent e) {
+		//control first snake with space and arrow keys
 		if (e.getKeyCode()==32) { //space
-			shootActivate = true;
-			ammunitionsNumber--;
-			speedBx = 2*dx;
-			speedBy = 2*dy;
-			if (dx>0) {
-				xb = xp[0]+xlen;
-				yb = yp[0]+ylen/4;
-			} 
-			else if ( dx !=0 ) {
-				xb = xp[0]-xlen/2;
-				yb = yp[0]+ylen/4;
-			} 
-			if(dy<0) {
-				xb = xp[0]+xlen/4;
-				yb = yp[0]+ylen/2;
-			}
-			else if ( dy != 0 ){ 						
-				xb = xp[0]+xlen/4;
-				yb = yp[0] + ylen;
-			}			
-		} //space ends
-		
-		//control first snake with arrow keys
+			shootActivate1 = true;
+			ammunitionsNumber1--;
+			for (Bullet b : player1.bullets){
+				if (!b.isShot){
+					b.speedBx = 2*dx;
+					b.speedBy = 2*dy;
+					if (dx>0) {
+						b.setX(player1.getArrX()[0] + xlen);
+						b.setY(player1.getArrY()[0] + ylen/4);
+					}
+					else if ( dx !=0 ) {
+						b.setX(player1.getArrX()[0] - xlen/2);
+						b.setY(player1.getArrY()[0] + ylen/4);
+					}
+					if(dy<0) {
+						b.setX(player1.getArrX()[0] + xlen/4);
+						b.setY(player1.getArrY()[0] + ylen/2);
+
+					}
+					else if ( dy != 0 ){
+						b.setX(player1.getArrX()[0] + xlen/4);
+						b.setY(player1.getArrY()[0] + ylen);
+
+					}
+					b.isShot = true;
+					break;
+				}
+			} //space ends
+		}
 		if(dx!=0) {
 			if(e.getKeyCode()==38 && readyToMove1) {
 				dy = -1*Math.abs(dx);
@@ -322,8 +346,39 @@ implements ComponentListener, KeyListener, Runnable {
 				readyToMove1 = false;
 			}
 		}
-		
-		//control second snake with a,s,d,w keys
+
+		//control second snake with G and A,S,D,W keys
+		if (e.getKeyCode()==71) // G
+		{ //shooting
+			shootActivate2 = true;
+			ammunitionsNumber2--;
+			for (Bullet b : player2.bullets){
+				if (!b.isShot){
+					b.speedBx = 2*dx2;
+					b.speedBy = 2*dy2;
+					if (dx2>0) {
+						b.setX(player2.getArrX()[0] + xlen);
+						b.setY(player2.getArrY()[0] + ylen/4);
+					}
+					else if ( dx2 !=0 ) {
+						b.setX(player2.getArrX()[0] - xlen/2);
+						b.setY(player2.getArrY()[0] + ylen/4);
+					}
+					if(dy2<0) {
+						b.setX(player2.getArrX()[0] + xlen/4);
+						b.setY(player2.getArrY()[0] + ylen/2);
+
+					}
+					else if ( dy2 != 0 ){
+						b.setX(player2.getArrX()[0] + xlen/4);
+						b.setY(player2.getArrY()[0] + ylen);
+
+					}
+					b.isShot = true;
+					break;
+				}
+			} //shooting ends
+		}
 		if(dx2!=0) {
 			if(e.getKeyCode()==87 && readyToMove2) {
 				dy2 = -1*Math.abs(dx2);
