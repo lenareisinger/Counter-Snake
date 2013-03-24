@@ -29,16 +29,32 @@ implements ComponentListener, KeyListener, Runnable {
 
 	float[] tx = new float[100];	// x position of blackhole
 	float[] ty = new float[100];	// y position of blackhole
+	
+	Level level = new Level(1, 150, 5);
+	
+	
+	boolean snake1Alive=true;
+	boolean snake2Alive=true;
 
 	SnakeHead player1;
 	SnakeHead player2;
 	int initialSize = 8;
 	int blackHoleNumber = 0;
 	int foodCount = 0;
+	int levelLength=15; //amount of food the snakes have to eat to reach the next level
 	float xlen,ylen; // size of snake
 	float dx,dy, dx2, dy2; // current speed + direction of snake
 	boolean start = true;
 	float xp0, yp0, yp20, xp20;
+	
+	int score1; //score of blue snake
+	int score2; //score of red snake
+	
+	Obstacles obstacle = new Obstacles(xlen, ylen);
+	float[] XPos = new float[50];
+	float[] YPos = new float[50];
+
+	
 
 	boolean shootActivate1 = false; // checks if trigger key 1 is hit
 	boolean shootActivate2 = false; // check if trigger key 2 is hit
@@ -51,7 +67,7 @@ implements ComponentListener, KeyListener, Runnable {
 	float randomNumber1, randomNumber2, random3, random4, xval, yval, xdif, ydif;
 	BufferedImage background, headB, headR;
 
-	int delay; // delay between frames in milliseconds
+	long delay; // delay between frames in milliseconds
 	Thread animThread; // animation thread
 
 	// SnakePanel constructor
@@ -62,7 +78,7 @@ implements ComponentListener, KeyListener, Runnable {
 
 		//loads background
 		try {
-			background = ImageIO.read(new File("bg3.png"));
+			background = ImageIO.read(new File("bg1.png"));
 			headB = ImageIO.read(new File("headBlue.png"));
 			headR = ImageIO.read(new File("headRed.png"));
 		} catch (IOException e) {
@@ -73,7 +89,8 @@ implements ComponentListener, KeyListener, Runnable {
 		ysize = 600;
 		xlen = 20;
 		ylen = 20;
-		dx = 0;
+		level.createLevel(1);
+		/*dx = 0;
 		dy = 20;
 		xp0=200;
 		yp0=300;
@@ -81,9 +98,20 @@ implements ComponentListener, KeyListener, Runnable {
 		yp20=300;
 
 		dx2 = 0;
-		dy2 = -20;
+		dy2 = -20;*/
+		
+		//gets start position and dx/dy of the first level
+		xp0=obstacle.getStartPosX(level.levelNumber);
+		yp0=obstacle.getStartPosY(level.levelNumber);
+		xp20=obstacle.getStartPosX2(level.levelNumber);
+		yp20=obstacle.getStartPosY2(level.levelNumber);
+		dx=obstacle.getDx(level.levelNumber);
+		dy=obstacle.getDy(level.levelNumber);
+		dx2=obstacle.getDx2(level.levelNumber);
+		dy2=obstacle.getDy2(level.levelNumber);
 
-		delay = 100;
+		//speed of the snake
+		delay =level.speed;
 
 		randomNumber1 = (xlen)*Math.round(Math.random()*((xsize/xlen)-1));
 		randomNumber2 = (ylen)*Math.round(Math.random()*((ysize/ylen)-1));
@@ -137,30 +165,32 @@ implements ComponentListener, KeyListener, Runnable {
 		g2.draw(new Rectangle2D.Double(randomNumber1, randomNumber2, xlen, ylen));
 
 		//draw black holes
-		for (int j=0;j<blackHoleNumber;j++){
+		for (int j=1;j<=blackHoleNumber;j++){
 			g2.setPaint(Color.black);
 			g2.fill(new Rectangle2D.Double(tx[j], ty[j], xlen, ylen));
 		}
 		
 		//Draw Obstacles
-		Obstacles level1 = new Obstacles(xlen, ylen);
-		float[] level1XPos = new float[50];
-		float[] level1YPos = new float[50];
-	    level1XPos = level1.DrawObstacles(1, "x", xlen, ylen, xsize, ysize);
-	    level1YPos = level1.DrawObstacles(1, "y", xlen, ylen, xsize, ysize);
-	    
-	    for(int i = 0; i < level1XPos.length; i++)
+		
+		/* Obstacles obstacle = new Obstacles(xlen, ylen);
+		float[] XPos = new float[50];
+		float[] YPos = new float[50];
+		*/
+	    XPos = obstacle.DrawObstacles(level.levelNumber, "x", xlen, ylen, xsize, ysize);
+	    YPos = obstacle.DrawObstacles(level.levelNumber, "y", xlen, ylen, xsize, ysize);
+	    		
+	    for(int i = 0; i < XPos.length; i++)
 	    {
-	    	if((level1XPos[i]==0)&&(level1YPos[i]==0))
+	    	if((XPos[i]==0)&&(YPos[i]==0))
 	    	{
 	    	//prevents any unfilled arrays drawing rectangle at (0.0)	
 	    	} 
 	    	else
 	    	{
 	    	g2.setPaint(Color.gray);
-	    	g2.fill(new Rectangle2D.Double(level1XPos[i], level1YPos[i], xlen, ylen));
+	    	g2.fill(new Rectangle2D.Double(XPos[i], YPos[i], xlen, ylen));
 	    	g2.setColor(Color.black);
-	    	g2.draw(new Rectangle2D.Double(level1XPos[i], level1YPos[i], xlen, ylen));
+	    	g2.draw(new Rectangle2D.Double(XPos[i], YPos[i], xlen, ylen));
 	    	}
 	    }
 
@@ -209,9 +239,9 @@ implements ComponentListener, KeyListener, Runnable {
 	public void componentShown (ComponentEvent e) { }
 
 	public void makeBlackHole() {
-		if (foodCount%3==0){
-			tx[(foodCount)/3] = (xlen)*Math.round(Math.random()*((xsize/xlen)-1));
-			ty[(foodCount)/3] = (xlen)*Math.round(Math.random()*((xsize/xlen)-1));
+		if (foodCount%level.blackHoles==0){
+			tx[(foodCount)/level.blackHoles] = (xlen)*Math.round(Math.random()*((xsize/xlen)-1));
+			ty[(foodCount)/level.blackHoles] = (xlen)*Math.round(Math.random()*((xsize/xlen)-1));
 			blackHoleNumber += 1;
 		}
 	}
@@ -220,20 +250,92 @@ implements ComponentListener, KeyListener, Runnable {
 
 		for(int i = 0; i<player2.getSize(); i++) {
 			if(player1.getArrX()[0]==player2.getArrX()[i] && player1.getArrY()[0]==player2.getArrY()[i]) {
-				JOptionPane.showMessageDialog (null, "Red Snake loses!", "GAME OVER", JOptionPane.ERROR_MESSAGE);
+				/*JOptionPane.showMessageDialog (null, "Blue Snake loses!", "GAME OVER", JOptionPane.ERROR_MESSAGE);
 				mainWindow.dispose();
 				alive=false;
-				break;
+				break;*/
+				dx=0;
+				dy=0;
+				snake1Alive=false;
 			}
 		}
 		if(alive) {
 			for(int i = 0; i<player1.getSize(); i++) {
 				if(player2.getArrX()[0]==player1.getArrX()[i] && player2.getArrY()[0]==player1.getArrY()[i]) {
-					JOptionPane.showMessageDialog (null, "Blue Snake loses!", "GAME OVER", JOptionPane.ERROR_MESSAGE);
+					/*JOptionPane.showMessageDialog (null, "Red Snake loses!", "GAME OVER", JOptionPane.ERROR_MESSAGE);
 					mainWindow.dispose();
 					alive=false;
-					break;
+					break;*/
+					dx2=0;
+					dy2=0;
+					snake2Alive=false;
 				}
+			}
+		}
+	}
+	
+	public void checkLevel(){
+		if (foodCount==levelLength){
+			
+			//calculates the score of each snake
+			score1=score1+player1.getSize()-2;
+			score2=score2+player2.getSize()-2;
+			
+			snake1Alive=true;
+			snake2Alive=true;
+			
+			//checks if the last level is reached
+			if (level.levelNumber==5 && score1>score2){
+				JOptionPane.showMessageDialog (null, "The blue snake wins! \n Blue Snake: "+score1+" \n Red Snake: "+score2 , "Game over", 1);
+				mainWindow.dispose();
+				alive = false;
+			}
+			else if (level.levelNumber==5 && score1<score2){
+				JOptionPane.showMessageDialog (null, "The red snake wins! \n Blue Snake: "+score1+" \n Red Snake: "+score2 , "Game over", 1);
+				mainWindow.dispose();
+				alive = false;
+			}
+			else if (level.levelNumber==5 && score1==score2){
+				JOptionPane.showMessageDialog (null, "Both snakes win! \n Blue Snake: "+score1+" \n Red Snake: "+score2 , "Game over", 1);
+				mainWindow.dispose();
+				alive = false;
+			}
+			
+		
+			else {
+			JOptionPane.showMessageDialog (null, "You made it to the next level! \n Blue Snake: "+ score1 +" points and Red Snake: "+score2+" points" , "Level "+(level.levelNumber+1), 1);
+			level.moveLevelUp();
+			delay=level.speed;
+			foodCount=0;
+			
+			//changes the background image
+			try {
+				background = ImageIO.read(new File("bg"+level.levelNumber+".png"));
+			} catch (IOException e) {
+			}
+			//deletes all black holes
+			for(int i=0; i<blackHoleNumber; i++ ){
+				tx[i]=0;
+				ty[i]=0;
+			}
+			blackHoleNumber=0;
+			
+			//gets start positions for the next level
+			xp0=obstacle.getStartPosX(level.levelNumber);
+			yp0=obstacle.getStartPosY(level.levelNumber);
+			xp20=obstacle.getStartPosX2(level.levelNumber);
+			yp20=obstacle.getStartPosY2(level.levelNumber);
+			dx=obstacle.getDx(level.levelNumber);
+			dy=obstacle.getDy(level.levelNumber);
+			dx2=obstacle.getDx2(level.levelNumber);
+			dy2=obstacle.getDy2(level.levelNumber);
+			
+			player1 = new SnakeHead(initialSize, xp0, yp0);
+			player1.setPos(player1.first, xp0, yp0, dx, dy);
+
+			player2 = new SnakeHead(initialSize, xp20, yp20);
+			player2.setPos(player2.first, xp20, yp20, dx2, dy2);
+			
 			}
 		}
 	}
@@ -241,15 +343,15 @@ implements ComponentListener, KeyListener, Runnable {
 	public void run() {
 		while (alive) { // loop while both snakes are alive
 			//update positions
-			player1.setX(player1.getX()+dx);
+			if (snake1Alive) {player1.setX(player1.getX()+dx);
 			player1.setY(player1.getY()+dy);
 			player1.first.setPos(player1.getX()-dx, player1.getY()-dy);
-			player1.setPos(player1.first);
+			player1.setPos(player1.first);}
 
-			player2.setX(player2.getX()+dx2);
+			if (snake2Alive) {player2.setX(player2.getX()+dx2);
 			player2.setY(player2.getY()+dy2);
 			player2.first.setPos(player2.getX()-dx2, player2.getY()-dy2);
-			player2.setPos(player2.first);
+			player2.setPos(player2.first);}
 
 			// check to see if the snakes have hit any walls
 			player1.checkWalls(xlen, xsize, ylen, ysize);
@@ -259,48 +361,60 @@ implements ComponentListener, KeyListener, Runnable {
 			if (player1.checkFood(randomNumber1, randomNumber2, xsize, ysize, xlen, ylen)){
 				randomNumber1 = (xlen)*Math.round(Math.random()*((xsize/xlen)-1));
 				randomNumber2 = (ylen)*Math.round(Math.random()*((ysize/ylen)-1));
-				makeBlackHole();
 				foodCount++;
+				makeBlackHole();
 				player1.incSize();
 			}
 
 			if (player2.checkFood(randomNumber1, randomNumber2, xsize, ysize, xlen, ylen)){
 				randomNumber1 = (xlen)*Math.round(Math.random()*((xsize/xlen)-1));
 				randomNumber2 = (ylen)*Math.round(Math.random()*((ysize/ylen)-1));
-				makeBlackHole();
 				foodCount++;
+				makeBlackHole();
 				player2.incSize();
 			}
 
 			// checks whether the snakes bites themselves or not
 			if (player1.checkSnake(alive)==false){
-				JOptionPane.showMessageDialog (null, "You are worthless and weak!", "GAME OVER", JOptionPane.ERROR_MESSAGE);
+				dx=0;
+				dy=0;
+				snake1Alive=false;
+				/*JOptionPane.showMessageDialog (null, "You are worthless and weak!", "GAME OVER", JOptionPane.ERROR_MESSAGE);
 				mainWindow.dispose();
-				alive = false;
-			}
-			else {
-				if (player2.checkSnake(alive)==false){
-					JOptionPane.showMessageDialog (null, "You are worthless and weak!", "GAME OVER", JOptionPane.ERROR_MESSAGE);
-					mainWindow.dispose();
-					alive = false;
-				}
+				alive = false;*/
+				
 			}
 			
+			if (player2.checkSnake(alive)==false){
+					/*JOptionPane.showMessageDialog (null, "You are worthless and weak!", "GAME OVER", JOptionPane.ERROR_MESSAGE);
+					mainWindow.dispose();
+					alive = false;*/
+					dx2=0;
+					dy2=0;
+					snake2Alive=false;
+				}
+				
 			//checks whether snake crashes into obstacles
-			Obstacles level1 = new Obstacles(xlen, ylen);
+			/*Obstacles level1 = new Obstacles(xlen, ylen);
 			float[] level1XPos = new float[10];
 		    level1XPos = level1.DrawObstacles(1, "x", xlen, ylen, xsize, ysize);
 		    float[] level1YPos = new float[10];
-		    level1YPos = level1.DrawObstacles(1, "y", xlen, ylen, xsize, ysize);
-			if (player1.checkObstacles(level1XPos, level1YPos, xsize, ysize, xlen, ylen)==true){
-				mainWindow.dispose();
+		    level1YPos = level1.DrawObstacles(1, "y", xlen, ylen, xsize, ysize);*/
+			if (player1.checkObstacles(XPos, YPos, xsize, ysize, xlen, ylen)==true){
+				/*mainWindow.dispose();
 				JOptionPane.showMessageDialog (null, "CCCRRRAAAAASSSHHHH!", "GAME OVER", JOptionPane.ERROR_MESSAGE);
-				alive=false;
+				alive=false;*/
+				dx=0;
+				dy=0;
+				snake1Alive=false;
 			}
-			if (player2.checkObstacles(level1XPos, level1YPos, xsize, ysize, xlen, ylen)==true){
-				mainWindow.dispose();
+			if (player2.checkObstacles(XPos, YPos, xsize, ysize, xlen, ylen)==true){
+				/*mainWindow.dispose();
 				JOptionPane.showMessageDialog (null, "CCCRRRAAAAASSSHHHH!", "GAME OVER", JOptionPane.ERROR_MESSAGE);
-				alive=false;
+				alive=false;*/
+				dx2=0;
+				dy2=0;
+				snake2Alive=false;
 			}
 
 			// checks whether the snakes are in the black holes
@@ -308,6 +422,13 @@ implements ComponentListener, KeyListener, Runnable {
 			player2.checkBlackHole(blackHoleNumber, tx, ty, xval, yval, xlen, ylen, xsize, ysize);
 
 			checkCollision();
+			
+			//makes sure that a new level starts if both snakes died
+			if (snake1Alive==false && snake2Alive==false){
+				foodCount=levelLength;
+			}
+			
+			checkLevel();
 			
 			//shoot
 			for (Bullet b: player1.bullets) b.move();
