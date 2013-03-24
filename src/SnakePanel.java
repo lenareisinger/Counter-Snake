@@ -312,8 +312,13 @@ implements ComponentListener, KeyListener, Runnable {
 		
 			else {
 			JOptionPane.showMessageDialog (null, "You made it to the next level! \n Blue Snake: "+ score1 +" points and Red Snake: "+score2+" points" , "Level "+(level.levelNumber+1), 1);
+			
+			//goes to the next level
 			level.moveLevelUp();
+			
+			//changes speed of snake
 			delay=level.speed;
+			
 			foodCount=0;
 			
 			//changes the background image
