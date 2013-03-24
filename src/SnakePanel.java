@@ -250,7 +250,11 @@ implements ComponentListener, KeyListener, Runnable {
 
 		for(int i = 0; i<player2.getSize(); i++) {
 			if(player1.getArrX()[0]==player2.getArrX()[i] && player1.getArrY()[0]==player2.getArrY()[i]) {
-				/*JOptionPane.showMessageDialog (null, "Blue Snake loses!", "GAME OVER", JOptionPane.ERROR_MESSAGE);
+
+				/*
+
+				JOptionPane.showMessageDialog (null, "Blue Snake loses!", "GAME OVER", JOptionPane.ERROR_MESSAGE);
+
 				mainWindow.dispose();
 				alive=false;
 				break;*/
@@ -262,7 +266,11 @@ implements ComponentListener, KeyListener, Runnable {
 		if(alive) {
 			for(int i = 0; i<player1.getSize(); i++) {
 				if(player2.getArrX()[0]==player1.getArrX()[i] && player2.getArrY()[0]==player1.getArrY()[i]) {
-					/*JOptionPane.showMessageDialog (null, "Red Snake loses!", "GAME OVER", JOptionPane.ERROR_MESSAGE);
+
+					/*
+
+					JOptionPane.showMessageDialog (null, "Red Snake loses!", "GAME OVER", JOptionPane.ERROR_MESSAGE);
+
 					mainWindow.dispose();
 					alive=false;
 					break;*/
