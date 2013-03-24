@@ -124,7 +124,7 @@ public class SnakeHead {
 
 	// Checks if snake's head is on black hole
 	public void checkBlackHole(int blackHoleNumber, float[] tx, float[] ty, float xval, float yval, float xlen, float ylen, float xsize, float ysize) {
-		for(int i = 0; i<blackHoleNumber; i++) {
+		for(int i = 1; i<=blackHoleNumber; i++) {
 			if(tx[i]==getArrX()[0] && ty[i]==getArrY()[0]) {
 				xval= getArrX()[0];
 				yval= getArrY()[0];
@@ -152,7 +152,7 @@ public class SnakeHead {
 		boolean crash = false;
 		
 		for(int i =0; i < xvalues.length; i++)
-		if(getArrX()[0]==xvalues[i] && getArrY()[0]==yvalues[i])
+		if(getArrX()[0]==xvalues[i] && xvalues[i] != 0 && getArrY()[0]==yvalues[i] && yvalues[i] != 0)
 		{
 			crash = true;
 		}
