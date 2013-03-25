@@ -1,17 +1,21 @@
 public class Obstacles 
 {
-	//private int level;
+	private int level;
 
-	public Obstacles(float xlen, float ylen)
+	public Obstacles(int level)
 	{
-		//this.level = level;
+		this.level = level;
 	}
 		
-	public float[] DrawObstacles(int level, String plane, float xlen, float ylen, float xsize, float ysize)
+	public float[] DrawObstacles(String plane)
 	{
-		float[] positions = new float[50];
-		if (level==1){
-			
+		float[] positions = new float[120];
+		if (level==1)
+		{
+			for(int i = 0; i < positions.length; i++)
+			{
+				positions[i] = -1;
+			}
 		}
 		if ((level == 2)&&(plane == "x"))
 		{
@@ -27,6 +31,10 @@ public class Obstacles
 			{
 				positions[i] = (600/2);
 			}
+			for(int i = 45; i < positions.length; i++)
+			{
+				positions[i] = -1;
+			}
 
 		}
 		else if ((level == 2)&&(plane == "y"))
@@ -41,9 +49,160 @@ public class Obstacles
 			}
 			for(int i = 30; i < 45; i++)
 			{
-				positions[i] = (600 - 20*(i - 30));
+				positions[i] = (600 - 20*(i -30));
 			}
-		}	
+			for(int i = 45; i < positions.length; i++)
+			{
+				positions[i] = -1;
+			}
+		}
+		else if ((level == 3)&&(plane == "x"))
+		{
+			for(int i = 0; i < 10; i++)
+			{
+				positions[i] = (20*i);
+			}
+			for(int i = 10; i < 20; i++)
+			{
+				positions[i] = (600 - (20*((i+1)-10)));
+			}
+			for(int i = 20; i < 30; i++)
+			{
+				positions[i] = (20*(i - 20));
+			}
+			for(int i = 30; i < 40; i++)
+			{
+				positions[i] = (600 - (20*((i+1)-30)));
+			}
+			for(int i = 45; i < positions.length; i++)
+			{
+				positions[i] = -1;
+			}
+		}
+		else if ((level == 3)&&(plane == "y"))
+		{
+			for(int i = 0; i < 10; i++)
+			{
+				positions[i] = (20*i);
+			}
+			for(int i = 10; i < 20; i++)
+			{
+				positions[i] = (20*(i - 10));
+			}
+			for(int i = 20; i < 30; i++)
+			{
+				positions[i] = (600 - (20*((i+1)-20)));
+			}
+			for(int i = 30; i < 40; i++)
+			{
+				positions[i] = (600 - (20*((i+1)-30)));
+			}
+			for(int i = 45; i < positions.length; i++)
+			{
+				positions[i] = -1;
+			}
+		}
+		else if ((level == 4)&&(plane == "x"))
+		{
+			for(int i = 0; i < 20; i++)
+			{
+				positions[i] = 20*i;
+			}
+			for(int i = 20; i < 25; i++)
+			{
+				positions[i] = 380;
+			}
+			for(int i = 25; i < 45; i++)
+			{
+				positions[i] = (600 - 20*(i-25));
+			}
+			for(int i = 45; i<50; i++)
+			{
+				positions[i] = 220;
+			}
+			for(int i = 50; i < positions.length; i++)
+			{
+				positions[i] = -1;
+			}
+		}
+		else if ((level == 4)&&(plane == "y"))
+		{
+			for(int i = 0; i < 20; i++)
+			{
+				positions[i] = 140;
+			}
+			for(int i = 20; i< 25; i++)
+			{
+				positions[i] = 160 + ((i-20)*20);
+			}
+			for(int i = 25; i < 45; i++)
+			{
+				positions[i] = (600 - 160);
+			}
+			for(int i = 45; i < 50; i++)
+			{
+				positions[i] = (600 - 160 - (((i-45)+1)*20));
+			}
+			for(int i = 50; i < positions.length; i++)
+			{
+				positions[i] = -1;
+			}	
+		}
+		else if ((level == 5)&&(plane == "x"))
+		{
+			for(int i = 0; i < 15; i++)
+			{
+				positions[i] = 120;
+			}
+			for(int i = 15; i < 30; i++)
+			{
+				positions[i] = (600 - 260);
+			}
+			for(int i =30; i < 45; i++)
+			{
+				positions[i] = (600 - 140);
+			}
+			for(int i = 45; i < 60; i++)
+			{
+				positions[i] = 240;
+			}
+			for(int i = 60; i < 90; i++)
+			{
+				positions[i] = 0;
+			}
+			for(int i = 90; i < 120; i++)
+			{
+				positions[i] = 580;
+			}
+			
+		}
+		else if ((level == 5)&&(plane == "y"))
+		{
+			for(int i = 0; i < 15; i++)
+			{
+				positions[i] = (20*i);
+			}
+			for(int i = 15; i < 30; i++)
+			{
+				positions[i] = (20*(i-15));
+			}
+			for(int i = 30; i < 45; i++)
+			{
+				positions[i] = (600 - 20*(i -30));
+			}
+			for(int i = 45; i < 60; i++)
+			{
+				positions[i] = (600 - 20*(i -45));
+			}
+			for(int i = 60; i < 90; i++)
+			{
+				positions[i] = (20*(i-60));
+			}
+			for(int i = 90; i < 120; i++)
+			{
+				positions[i] = (20*(i-90));
+			}
+		}
 		return positions;
 	}
 	
@@ -57,10 +216,10 @@ public class Obstacles
 			xp0=400;
 		}
 		if (level==3){
-			xp0=400;
+			xp0=380;
 		}
 		if (level==4){
-			xp0=400;
+			xp0=300;
 		}
 		if (level==5){
 			xp0=400;
@@ -79,7 +238,7 @@ public class Obstacles
 			yp0=300;
 		}
 		if (level==4){
-			yp0=300;
+			yp0=80;
 		}
 		if (level==5){
 			yp0=300;
@@ -98,7 +257,7 @@ public class Obstacles
 			xp20=200;
 		}
 		if (level==4){
-			xp20=200;
+			xp20=300;
 		}
 		if (level==5){
 			xp20=200;
@@ -117,7 +276,7 @@ public class Obstacles
 			yp20=300;
 		}
 		if (level==4){
-			yp20=300;
+			yp20=500;
 		}
 		if (level==5){
 			yp20=300;
@@ -136,7 +295,7 @@ public class Obstacles
 			dx=0;
 		}
 		if (level==4){
-			dx=0;
+			dx=20;
 		}
 		if (level==5){
 			dx=0;
@@ -155,7 +314,7 @@ public class Obstacles
 			dy=20;
 		}
 		if (level==4){
-			dy=20;
+			dy=0;
 		}
 		if (level==5){
 			dy=20;
@@ -174,7 +333,7 @@ public class Obstacles
 			dx2=0;
 		}
 		if (level==4){
-			dx2=0;
+			dx2=20;
 		}
 		if (level==5){
 			dx2=0;
@@ -193,11 +352,12 @@ public class Obstacles
 			dy2=20;
 		}
 		if (level==4){
-			dy2=20;
+			dy2=0;
 		}
 		if (level==5){
 			dy2=20;
 		}
 		return dy2;
 	}
+	
 }

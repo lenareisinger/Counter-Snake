@@ -147,14 +147,16 @@ public class SnakeHead {
 	}
 	
 	// Checks if snake hits obstacles
-	public boolean checkObstacles(float[] xvalues , float[] yvalues, float xsize, float ysize, float xlen, float ylen) {
+	public boolean checkObstacles(float[] xvalues, float[] yvalues, float xsize, float ysize, float xlen, float ylen) {
 		
 		boolean crash = false;
 		
-		for(int i =0; i < xvalues.length; i++)
-		if(getArrX()[0]==xvalues[i] && xvalues[i] != 0 && getArrY()[0]==yvalues[i] && yvalues[i] != 0)
+		for(int i = 0; i < xvalues.length; i++)
 		{
-			crash = true;
+			if((getX()==xvalues[i]) && (getY()==yvalues[i]))
+			{
+				crash = true;
+			}
 		}
 		return crash;
 	}
