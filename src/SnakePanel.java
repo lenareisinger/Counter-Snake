@@ -50,9 +50,9 @@ implements ComponentListener, KeyListener, Runnable {
 	int score1; //score of blue snake
 	int score2; //score of red snake
 	
-	Obstacles obstacle = new Obstacles(xlen, ylen);
-	float[] XPos = new float[50];
-	float[] YPos = new float[50];
+	Obstacles obstacle = new Obstacles(level.levelNumber);
+	float[] XPos = new float[120];
+	float[] YPos = new float[120];
 
 	
 
@@ -113,6 +113,7 @@ implements ComponentListener, KeyListener, Runnable {
 		//speed of the snake
 		delay =level.speed;
 
+		//check random numbers are not producing food on obstacles
 		randomNumber1 = (xlen)*Math.round(Math.random()*((xsize/xlen)-1));
 		randomNumber2 = (ylen)*Math.round(Math.random()*((ysize/ylen)-1));
 
@@ -172,18 +173,18 @@ implements ComponentListener, KeyListener, Runnable {
 		
 		//Draw Obstacles
 		
-		/* Obstacles obstacle = new Obstacles(xlen, ylen);
-		float[] XPos = new float[50];
-		float[] YPos = new float[50];
-		*/
-	    XPos = obstacle.DrawObstacles(level.levelNumber, "x", xlen, ylen, xsize, ysize);
-	    YPos = obstacle.DrawObstacles(level.levelNumber, "y", xlen, ylen, xsize, ysize);
+		Obstacles obstacle = new Obstacles(level.levelNumber);
+		float[] XPos = new float[120];
+		float[] YPos = new float[120];
+		
+	    XPos = obstacle.DrawObstacles("x");
+	    YPos = obstacle.DrawObstacles("y");
 	    		
 	    for(int i = 0; i < XPos.length; i++)
 	    {
-	    	if((XPos[i]==0)&&(YPos[i]==0))
+	    	if((XPos[i]==-1)&&(YPos[i]==-1))
 	    	{
-	    	//prevents any unfilled arrays drawing rectangle at (0.0)	
+	    	//prevents any unfilled arrays drawing rectangle at (0,0)	
 	    	} 
 	    	else
 	    	{
@@ -371,6 +372,7 @@ implements ComponentListener, KeyListener, Runnable {
 			player2.checkWalls(xlen, xsize, ylen, ysize);
 
 			// checks food and generate new if needed
+	
 			if (player1.checkFood(randomNumber1, randomNumber2, xsize, ysize, xlen, ylen)){
 				randomNumber1 = (xlen)*Math.round(Math.random()*((xsize/xlen)-1));
 				randomNumber2 = (ylen)*Math.round(Math.random()*((ysize/ylen)-1));
@@ -408,23 +410,17 @@ implements ComponentListener, KeyListener, Runnable {
 				}
 				
 			//checks whether snake crashes into obstacles
-			/*Obstacles level1 = new Obstacles(xlen, ylen);
-			float[] level1XPos = new float[10];
-		    level1XPos = level1.DrawObstacles(1, "x", xlen, ylen, xsize, ysize);
-		    float[] level1YPos = new float[10];
-		    level1YPos = level1.DrawObstacles(1, "y", xlen, ylen, xsize, ysize);*/
-			if (player1.checkObstacles(XPos, YPos, xsize, ysize, xlen, ylen)==true){
-				/*mainWindow.dispose();
-				JOptionPane.showMessageDialog (null, "CCCRRRAAAAASSSHHHH!", "GAME OVER", JOptionPane.ERROR_MESSAGE);
-				alive=false;*/
+			Obstacles obstacle = new Obstacles(level.levelNumber);
+			
+			XPos = obstacle.DrawObstacles("x");
+		    YPos = obstacle.DrawObstacles("y");
+		    
+			if (player1.checkObstacles(XPos, YPos, xlen, ylen, xsize, ysize )==true){
 				dx=0;
 				dy=0;
 				snake1Alive=false;
 			}
-			if (player2.checkObstacles(XPos, YPos, xsize, ysize, xlen, ylen)==true){
-				/*mainWindow.dispose();
-				JOptionPane.showMessageDialog (null, "CCCRRRAAAAASSSHHHH!", "GAME OVER", JOptionPane.ERROR_MESSAGE);
-				alive=false;*/
+			if (player2.checkObstacles(XPos, YPos, xlen, ylen, xsize, ysize)==true){
 				dx2=0;
 				dy2=0;
 				snake2Alive=false;
