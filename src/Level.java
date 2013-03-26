@@ -29,11 +29,11 @@ public class Level {
 			
 		}
 		if (levelNumber==4){
-			speed =90;
+			speed =95;
 			blackHoles=2;
 		}
 		if (levelNumber==5){
-			speed =80;
+			speed =90;
 			blackHoles=1;
 		}
 				

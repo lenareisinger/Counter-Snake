@@ -15,6 +15,7 @@ public class SnakeMain {
         
 		mainWindow.pack();
 		mainWindow.setVisible(true);
+		mainWindow.setLocationRelativeTo(null);
 	}
     
 	private static void createAndShowGUI() {

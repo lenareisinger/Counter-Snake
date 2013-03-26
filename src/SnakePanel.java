@@ -8,7 +8,7 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-//test
+
 public class SnakePanel extends JComponent 
 implements ComponentListener, KeyListener, Runnable {
 
@@ -22,16 +22,10 @@ implements ComponentListener, KeyListener, Runnable {
 	boolean readyToMove1 = true;
 	boolean readyToMove2 = true;
 
-	float[] xp = new float[100];	// x position of snake    // WE CAN DELETE THIS, but its still used in angels shooting...
-	float[] yp = new float[100];    // y position of snake
-	float[] xp2 = new float[100];	// x position of snake    // WE CAN DELETE THIS, but its still used in angels shooting...
-	float[] yp2 = new float[100];
-
 	float[] tx = new float[100];	// x position of blackhole
 	float[] ty = new float[100];	// y position of blackhole
 	
 	Level level = new Level(1, 150, 5);
-	
 	
 	boolean snake1Alive=true;
 	boolean snake2Alive=true;
@@ -122,12 +116,6 @@ implements ComponentListener, KeyListener, Runnable {
 
 		player2 = new SnakeHead(initialSize, xp20, yp20);
 		player2.setPos(player2.first, xp20, yp20, dx2, dy2);
-
-		xp = player1.getArrX();
-		yp = player1.getArrY();
-
-		xp2 = player2.getArrX();
-		yp2 = player2.getArrY();
 
 		// set up window properties
 		setBackground(Color.white);
@@ -251,33 +239,13 @@ implements ComponentListener, KeyListener, Runnable {
 
 		for(int i = 0; i<player2.getSize(); i++) {
 			if(player1.getArrX()[0]==player2.getArrX()[i] && player1.getArrY()[0]==player2.getArrY()[i]) {
-
-				/*
-
-				JOptionPane.showMessageDialog (null, "Blue Snake loses!", "GAME OVER", JOptionPane.ERROR_MESSAGE);
-
-				mainWindow.dispose();
-				alive=false;
-				break;*/
-				dx=0;
-				dy=0;
-				snake1Alive=false;
+				snake2Alive=false;
 			}
 		}
 		if(alive) {
 			for(int i = 0; i<player1.getSize(); i++) {
 				if(player2.getArrX()[0]==player1.getArrX()[i] && player2.getArrY()[0]==player1.getArrY()[i]) {
-
-					/*
-
-					JOptionPane.showMessageDialog (null, "Red Snake loses!", "GAME OVER", JOptionPane.ERROR_MESSAGE);
-
-					mainWindow.dispose();
-					alive=false;
-					break;*/
-					dx2=0;
-					dy2=0;
-					snake2Alive=false;
+					snake1Alive=false;
 				}
 			}
 		}
@@ -298,16 +266,19 @@ implements ComponentListener, KeyListener, Runnable {
 				JOptionPane.showMessageDialog (null, "The blue snake wins! \n Blue Snake: "+score1+" \n Red Snake: "+score2 , "Game over", 1);
 				mainWindow.dispose();
 				alive = false;
+				Menu.main(null);
 			}
 			else if (level.levelNumber==5 && score1<score2){
 				JOptionPane.showMessageDialog (null, "The red snake wins! \n Blue Snake: "+score1+" \n Red Snake: "+score2 , "Game over", 1);
 				mainWindow.dispose();
 				alive = false;
+				Menu.main(null);
 			}
 			else if (level.levelNumber==5 && score1==score2){
 				JOptionPane.showMessageDialog (null, "Both snakes win! \n Blue Snake: "+score1+" \n Red Snake: "+score2 , "Game over", 1);
 				mainWindow.dispose();
 				alive = false;
+				Menu.main(null);
 			}
 			
 		
@@ -357,15 +328,19 @@ implements ComponentListener, KeyListener, Runnable {
 	public void run() {
 		while (alive) { // loop while both snakes are alive
 			//update positions
-			if (snake1Alive) {player1.setX(player1.getX()+dx);
-			player1.setY(player1.getY()+dy);
-			player1.first.setPos(player1.getX()-dx, player1.getY()-dy);
-			player1.setPos(player1.first);}
+			if (snake1Alive) {
+				player1.setX(player1.getX()+dx);
+				player1.setY(player1.getY()+dy);
+				player1.first.setPos(player1.getX()-dx, player1.getY()-dy);
+				player1.setPos(player1.first);
+			}
 
-			if (snake2Alive) {player2.setX(player2.getX()+dx2);
-			player2.setY(player2.getY()+dy2);
-			player2.first.setPos(player2.getX()-dx2, player2.getY()-dy2);
-			player2.setPos(player2.first);}
+			if (snake2Alive) {
+				player2.setX(player2.getX()+dx2);
+				player2.setY(player2.getY()+dy2);
+				player2.first.setPos(player2.getX()-dx2, player2.getY()-dy2);
+				player2.setPos(player2.first);
+			}
 
 			// check to see if the snakes have hit any walls
 			player1.checkWalls(xlen, xsize, ylen, ysize);
@@ -390,28 +365,22 @@ implements ComponentListener, KeyListener, Runnable {
 			}
 
 			// checks whether the snakes bites themselves or not
-			if (player1.checkSnake(alive)==false){
+			if (player1.checkSnake(alive)==false) {
 				dx=0;
 				dy=0;
 				snake1Alive=false;
-				/*JOptionPane.showMessageDialog (null, "You are worthless and weak!", "GAME OVER", JOptionPane.ERROR_MESSAGE);
-				mainWindow.dispose();
-				alive = false;*/
-				
+
 			}
-			
-			if (player2.checkSnake(alive)==false){
-					/*JOptionPane.showMessageDialog (null, "You are worthless and weak!", "GAME OVER", JOptionPane.ERROR_MESSAGE);
-					mainWindow.dispose();
-					alive = false;*/
-					dx2=0;
-					dy2=0;
-					snake2Alive=false;
-				}
-				
+
+			if (player2.checkSnake(alive)==false) {
+				dx2=0;
+				dy2=0;
+				snake2Alive=false;
+			}
+
 			//checks whether snake crashes into obstacles
 			Obstacles obstacle = new Obstacles(level.levelNumber);
-			
+
 			XPos = obstacle.DrawObstacles("x");
 		    YPos = obstacle.DrawObstacles("y");
 		    
