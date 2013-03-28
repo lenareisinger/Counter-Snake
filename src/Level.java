@@ -9,7 +9,7 @@ public class Level {
 	public Level(int levelNumber, int speed, int blackHoles){
 		this.levelNumber = levelNumber;
 		this.speed=speed;
-		//this.obstacle=obstacle;
+//		this.obstacle=obstacle;
 	}
 	
 	public void createLevel(int levelNumber) {

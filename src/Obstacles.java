@@ -1,6 +1,6 @@
 public class Obstacles 
 {
-	private int level;
+	int level;
 
 	public Obstacles(int level)
 	{

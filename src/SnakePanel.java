@@ -47,7 +47,7 @@ implements ComponentListener, KeyListener, Runnable {
 	Obstacles obstacle = new Obstacles(level.levelNumber);
 	float[] XPos = new float[120];
 	float[] YPos = new float[120];
-
+	float[] randomNumbers = new float[2];
 	
 
 	boolean shootActivate1 = false; // checks if trigger key 1 is hit
@@ -110,7 +110,11 @@ implements ComponentListener, KeyListener, Runnable {
 		//check random numbers are not producing food on obstacles
 		randomNumber1 = (xlen)*Math.round(Math.random()*((xsize/xlen)-1));
 		randomNumber2 = (ylen)*Math.round(Math.random()*((ysize/ylen)-1));
-
+		randomNumbers = FoodChecker.foodCheck(XPos, YPos, randomNumber1, randomNumber2, xsize, xlen, ysize, ylen);
+		randomNumber1 = randomNumbers[0];
+		randomNumber2 = randomNumbers[1];
+		
+		
 		player1 = new SnakeHead(initialSize, xp0, yp0);
 		player1.setPos(player1.first, xp0, yp0, dx, dy);
 
@@ -349,16 +353,18 @@ implements ComponentListener, KeyListener, Runnable {
 			// checks food and generate new if needed
 	
 			if (player1.checkFood(randomNumber1, randomNumber2, xsize, ysize, xlen, ylen)){
-				randomNumber1 = (xlen)*Math.round(Math.random()*((xsize/xlen)-1));
-				randomNumber2 = (ylen)*Math.round(Math.random()*((ysize/ylen)-1));
+				randomNumbers = FoodChecker.foodCheck(XPos, YPos, randomNumber1, randomNumber2, xsize, xlen, ysize, ylen);
+				randomNumber1 = randomNumbers[0];
+				randomNumber2 = randomNumbers[1];
 				foodCount++;
 				makeBlackHole();
 				player1.incSize();
 			}
 
 			if (player2.checkFood(randomNumber1, randomNumber2, xsize, ysize, xlen, ylen)){
-				randomNumber1 = (xlen)*Math.round(Math.random()*((xsize/xlen)-1));
-				randomNumber2 = (ylen)*Math.round(Math.random()*((ysize/ylen)-1));
+				randomNumbers = FoodChecker.foodCheck(XPos, YPos, randomNumber1, randomNumber2, xsize, xlen, ysize, ylen);
+				randomNumber1 = randomNumbers[0];
+				randomNumber2 = randomNumbers[1];
 				foodCount++;
 				makeBlackHole();
 				player2.incSize();
