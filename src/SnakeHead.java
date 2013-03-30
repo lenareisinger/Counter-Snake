@@ -160,4 +160,7 @@ public class SnakeHead {
 		}
 		return crash;
 	}
+	public void setSize (int newSize){
+		snakeSize = newSize;
+	}
 }

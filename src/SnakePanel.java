@@ -240,16 +240,74 @@ implements ComponentListener, KeyListener, Runnable {
 	}
 
 	public void checkCollision(){
-
-		for(int i = 0; i<player2.getSize(); i++) {
-			if(player1.getArrX()[0]==player2.getArrX()[i] && player1.getArrY()[0]==player2.getArrY()[i]) {
-				snake2Alive=false;
+		if(player1.getArrX()[0]==player2.getArrX()[0] && player1.getArrY()[0]==player2.getArrY()[0]) {
+			snake1Alive=false;
+			snake2Alive=false;
+		}
+		else{
+			for(int i = 0; i<player2.getSize(); i++) {
+				if(player1.getArrX()[0]==player2.getArrX()[i] && player1.getArrY()[0]==player2.getArrY()[i]) {
+					player2.setSize(i);
+				}
+			}
+			if(alive) {
+				for(int i = 0; i<player1.getSize(); i++) {
+					if(player2.getArrX()[0]==player1.getArrX()[i] && player2.getArrY()[0]==player1.getArrY()[i]) {
+						player1.setSize(i);
+					}
+				}
 			}
 		}
-		if(alive) {
+	}
+	public void checkBullet(){ //checks if a bullet has shot a snake
+		//--------player1-------------
+		for (Bullet b: player1.bullets){
+			for(int i = 0; i<player2.getSize(); i++) {
+				if(((b.getX()==player2.getArrX()[i] || b.getX()==player2.getArrX()[i] + xlen) 
+						&& b.getY()>=player2.getArrY()[i] && b.getY()<=player2.getArrY()[i] + ylen)
+						||((b.getX() + xlen/2 ==player2.getArrX()[i] || b.getX() + xlen/2 == player2.getArrX()[i] + xlen) 
+								&& b.getY()>=player2.getArrY()[i] && b.getY()<=player2.getArrY()[i] + ylen)
+								//--
+								||((b.getY()==player2.getArrY()[i] || b.getY()==player2.getArrY()[i] + ylen) 
+										&& b.getX()>=player2.getArrX()[i] && b.getX()<=player2.getArrX()[i] + xlen)
+										||((b.getY() + ylen/2 ==player2.getArrY()[i] || b.getY() + ylen/2 == player2.getArrY()[i] + ylen) 
+												&& b.getX()>=player2.getArrX()[i] && b.getX()<=player2.getArrX()[i] + xlen)) {
+					player2.setSize(i);
+					b.setX(-100);
+					b.setY(-100);
+				} 
+			}
+			if(alive) {
+				for(int i = 0; i<player1.getSize(); i++) {
+					if(b.getX()==player1.getArrX()[i] && b.getY()==player1.getArrY()[i]) {
+						player1.setSize(i);
+					}
+				}
+			}
+		}
+		//----------player2-----------------------
+		for (Bullet b: player2.bullets){
 			for(int i = 0; i<player1.getSize(); i++) {
-				if(player2.getArrX()[0]==player1.getArrX()[i] && player2.getArrY()[0]==player1.getArrY()[i]) {
-					snake1Alive=false;
+				if(((b.getX()==player1.getArrX()[i] || b.getX()==player1.getArrX()[i] + xlen) 
+						&& b.getY()>=player1.getArrY()[i] && b.getY()<=player1.getArrY()[i] + ylen)
+						||((b.getX() + xlen/2 ==player1.getArrX()[i] || b.getX() + xlen/2 == player1.getArrX()[i] + xlen) 
+								&& b.getY()>=player1.getArrY()[i] && b.getY()<=player1.getArrY()[i] + ylen)
+								//--
+								||((b.getY()==player1.getArrY()[i] || b.getY()==player1.getArrY()[i] + ylen) 
+										&& b.getX()>=player1.getArrX()[i] && b.getX()<=player1.getArrX()[i] + xlen)
+										||((b.getY() + ylen/2 ==player1.getArrY()[i] || b.getY() + ylen/1 == player1.getArrY()[i] + ylen) 
+												&& b.getX()>=player1.getArrX()[i] && b.getX()<=player1.getArrX()[i] + xlen) ) {
+					player1.setSize(i);
+					b.setX(-100);
+					b.setY(-100);
+				} 
+			}
+			//---
+			if(alive) {
+				for(int i = 0; i<player2.getSize(); i++) {
+					if(b.getX()==player2.getArrX()[i] && b.getY()==player2.getArrY()[i]) {
+						player2.setSize(i);
+					}
 				}
 			}
 		}
@@ -406,6 +464,7 @@ implements ComponentListener, KeyListener, Runnable {
 			player2.checkBlackHole(blackHoleNumber, tx, ty, xval, yval, xlen, ylen, xsize, ysize);
 
 			checkCollision();
+			checkBullet();
 			
 			//makes sure that a new level starts if both snakes died
 			if (snake1Alive==false && snake2Alive==false){
