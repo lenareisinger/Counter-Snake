@@ -13,7 +13,7 @@ public class SnakeHead {
 		first = new SnakeBody(size);
 		snakeSize = size;
 		for (int i=0; i<5; i++) {
-			bullets.add(new Bullet(0, 0, 0, 0));
+			bullets.add(new Bullet(-100, -100, 0, 0));
 		}
 	}
 
@@ -37,12 +37,10 @@ public class SnakeHead {
 	public float[] getArrX() {
 		float[] s = new float[snakeSize+1];
 		s[0] = xp;
-		int i = 1;
 		SnakeBody temp = first;
-		while(temp.next != null) {
+		for(int i = 1; i<=snakeSize; i++) {
 			s[i]=temp.getX();
 			temp=temp.next;
-			i++;
 		}
 		return s;
 	}
@@ -51,12 +49,10 @@ public class SnakeHead {
 	public float[] getArrY() {
 		float[] s = new float[snakeSize+1];
 		s[0] = yp;
-		int i = 1;
 		SnakeBody temp = first;
-		while(temp.next != null) {
+		for(int i = 1; i<=snakeSize; i++) {
 			s[i]=temp.getY();
 			temp=temp.next;
-			i++;
 		}
 		return s;
 	}
@@ -162,5 +158,10 @@ public class SnakeHead {
 	}
 	public void setSize (int newSize){
 		snakeSize = newSize;
+		SnakeBody temp = first;
+		for(int i = 1; i<=snakeSize; i++) {
+			temp=temp.next;
+		}
+		temp = null;
 	}
 }

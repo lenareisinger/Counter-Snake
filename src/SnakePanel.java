@@ -24,39 +24,35 @@ implements ComponentListener, KeyListener, Runnable {
 
 	float[] tx = new float[100];	// x position of blackhole
 	float[] ty = new float[100];	// y position of blackhole
-	
+
 	Level level = new Level(1, 150, 5);
-	
+
 	boolean snake1Alive=true;
 	boolean snake2Alive=true;
 
 	SnakeHead player1;
 	SnakeHead player2;
-	int initialSize = 8;
+	int initialSize = 5;
 	int blackHoleNumber = 0;
 	int foodCount = 0;
 	int levelLength=15; //amount of food the snakes have to eat to reach the next level
-	float xlen,ylen; // size of snake
-	float dx,dy, dx2, dy2; // current speed + direction of snake
+	float xlen,ylen; // size of snakes
+	float dx,dy, dx2, dy2; // current speed + direction of snakes
 	boolean start = true;
 	float xp0, yp0, yp20, xp20;
-	
+
 	int score1; //score of blue snake
 	int score2; //score of red snake
-	
+
 	Obstacles obstacle = new Obstacles(level.levelNumber);
 	float[] XPos = new float[120];
 	float[] YPos = new float[120];
 	float[] randomNumbers = new float[2];
-	
+
 
 	boolean shootActivate1 = false; // checks if trigger key 1 is hit
 	boolean shootActivate2 = false; // check if trigger key 2 is hit
-	int ammunitionsNumber1, ammunitionsNumber2; //number of ammunitions
-	int bulletNum1, bulletNum2;
 	float speedBx, speedBy;
-
-	float xb,yb; //coordinates of bullet;
 
 	float randomNumber1, randomNumber2, random3, random4, xval, yval, xdif, ydif;
 	BufferedImage background, headB, headR;
@@ -66,7 +62,6 @@ implements ComponentListener, KeyListener, Runnable {
 
 	// SnakePanel constructor
 	public SnakePanel(JFrame mw) {
-		//
 		mainWindow = mw;
 		alive = true;
 
@@ -84,16 +79,7 @@ implements ComponentListener, KeyListener, Runnable {
 		xlen = 20;
 		ylen = 20;
 		level.createLevel(1);
-		/*dx = 0;
-		dy = 20;
-		xp0=200;
-		yp0=300;
-		xp20=400;
-		yp20=300;
 
-		dx2 = 0;
-		dy2 = -20;*/
-		
 		//gets start position and dx/dy of the first level
 		xp0=obstacle.getStartPosX(level.levelNumber);
 		yp0=obstacle.getStartPosY(level.levelNumber);
@@ -113,12 +99,11 @@ implements ComponentListener, KeyListener, Runnable {
 		randomNumbers = FoodChecker.foodCheck(XPos, YPos, randomNumber1, randomNumber2, xsize, xlen, ysize, ylen);
 		randomNumber1 = randomNumbers[0];
 		randomNumber2 = randomNumbers[1];
-		
-		
-		player1 = new SnakeHead(initialSize, xp0, yp0);
-		player1.setPos(player1.first, xp0, yp0, dx, dy);
 
-		player2 = new SnakeHead(initialSize, xp20, yp20);
+		//sets initial positions of snakes
+		player1 = new SnakeHead(initialSize+1, xp0, yp0);
+		player1.setPos(player1.first, xp0, yp0, dx, dy);
+		player2 = new SnakeHead(initialSize+1, xp20, yp20);
 		player2.setPos(player2.first, xp20, yp20, dx2, dy2);
 
 		// set up window properties
@@ -127,11 +112,6 @@ implements ComponentListener, KeyListener, Runnable {
 		setPreferredSize(new Dimension((int) xsize, (int) ysize));
 		setFocusable(true);
 		addComponentListener(this);
-
-		bulletNum1 = 5; //initial number of bullets for player1
-		bulletNum2 = 5; //initial number of bullets for player2
-		ammunitionsNumber1 = bulletNum1;
-		ammunitionsNumber2 = bulletNum2;
 
 		// start the animation thread
 		animThread = new Thread(this);
@@ -151,44 +131,39 @@ implements ComponentListener, KeyListener, Runnable {
 		// clear background to white
 		g2.drawImage(background, 0, 0, null);
 
-		//draw food
+		// draw food
 		g2.setPaint(Color.green);
 		g2.fill(new Rectangle2D.Double(randomNumber1, randomNumber2, xlen, ylen));
 		g2.setColor(Color.black);
 		g2.draw(new Rectangle2D.Double(randomNumber1, randomNumber2, xlen, ylen));
 
-		//draw black holes
+		// draw black holes
 		for (int j=1;j<=blackHoleNumber;j++){
 			g2.setPaint(Color.black);
 			g2.fill(new Rectangle2D.Double(tx[j], ty[j], xlen, ylen));
 		}
-		
-		//Draw Obstacles
-		
+
+		// draw Obstacles
 		Obstacles obstacle = new Obstacles(level.levelNumber);
 		float[] XPos = new float[120];
 		float[] YPos = new float[120];
-		
-	    XPos = obstacle.DrawObstacles("x");
-	    YPos = obstacle.DrawObstacles("y");
-	    		
-	    for(int i = 0; i < XPos.length; i++)
-	    {
-	    	if((XPos[i]==-1)&&(YPos[i]==-1))
-	    	{
-	    	//prevents any unfilled arrays drawing rectangle at (0,0)	
-	    	} 
-	    	else
-	    	{
-	    	g2.setPaint(Color.gray);
-	    	g2.fill(new Rectangle2D.Double(XPos[i], YPos[i], xlen, ylen));
-	    	g2.setColor(Color.black);
-	    	g2.draw(new Rectangle2D.Double(XPos[i], YPos[i], xlen, ylen));
-	    	}
-	    }
+
+		XPos = obstacle.DrawObstacles("x");
+		YPos = obstacle.DrawObstacles("y");
+
+		for(int i = 0; i < XPos.length; i++)
+		{
+			if(!((XPos[i]==-1)&&(YPos[i]==-1)))
+			{
+				g2.setPaint(Color.gray);
+				g2.fill(new Rectangle2D.Double(XPos[i], YPos[i], xlen, ylen));
+				g2.setColor(Color.black);
+				g2.draw(new Rectangle2D.Double(XPos[i], YPos[i], xlen, ylen));
+			}
+		}
 
 		if (shootActivate1 == true) { //drawing bullets for the first player
-			g2.setPaint(Color.red);
+			g2.setPaint(Color.blue);
 			for (Bullet b : player1.bullets){
 				if (b.isShot) { //draws a bullet
 					g2.fill(new Rectangle2D.Double(b.getX(), b.getY(), xlen/2, ylen/2));
@@ -260,9 +235,9 @@ implements ComponentListener, KeyListener, Runnable {
 		}
 	}
 	public void checkBullet(){ //checks if a bullet has shot a snake
-		//--------player1-------------
+		//--------bullets shot by player1 -------------
 		for (Bullet b: player1.bullets){
-			for(int i = 0; i<player2.getSize(); i++) {
+			for(int i = 1; i<player2.getSize(); i++) {
 				if(((b.getX()==player2.getArrX()[i] || b.getX()==player2.getArrX()[i] + xlen) 
 						&& b.getY()>=player2.getArrY()[i] && b.getY()<=player2.getArrY()[i] + ylen)
 						||((b.getX() + xlen/2 ==player2.getArrX()[i] || b.getX() + xlen/2 == player2.getArrX()[i] + xlen) 
@@ -277,17 +252,10 @@ implements ComponentListener, KeyListener, Runnable {
 					b.setY(-100);
 				} 
 			}
-			if(alive) {
-				for(int i = 0; i<player1.getSize(); i++) {
-					if(b.getX()==player1.getArrX()[i] && b.getY()==player1.getArrY()[i]) {
-						player1.setSize(i);
-					}
-				}
-			}
 		}
-		//----------player2-----------------------
+		//----------bullets shot by player2-----------------------
 		for (Bullet b: player2.bullets){
-			for(int i = 0; i<player1.getSize(); i++) {
+			for(int i = 1; i<player1.getSize(); i++) {
 				if(((b.getX()==player1.getArrX()[i] || b.getX()==player1.getArrX()[i] + xlen) 
 						&& b.getY()>=player1.getArrY()[i] && b.getY()<=player1.getArrY()[i] + ylen)
 						||((b.getX() + xlen/2 ==player1.getArrX()[i] || b.getX() + xlen/2 == player1.getArrX()[i] + xlen) 
@@ -302,27 +270,19 @@ implements ComponentListener, KeyListener, Runnable {
 					b.setY(-100);
 				} 
 			}
-			//---
-			if(alive) {
-				for(int i = 0; i<player2.getSize(); i++) {
-					if(b.getX()==player2.getArrX()[i] && b.getY()==player2.getArrY()[i]) {
-						player2.setSize(i);
-					}
-				}
-			}
 		}
 	}
-	
+
 	public void checkLevel(){
 		if (foodCount==levelLength){
-			
+
 			//calculates the score of each snake
-			score1=score1+player1.getSize()-2;
-			score2=score2+player2.getSize()-2;
-			
+			score1=score1+player1.getSize()-1;
+			score2=score2+player2.getSize()-1;
+
 			snake1Alive=true;
 			snake2Alive=true;
-			
+
 			//checks if the last level is reached
 			if (level.levelNumber==5 && score1>score2){
 				JOptionPane.showMessageDialog (null, "The blue snake wins! \n Blue Snake: "+score1+" \n Red Snake: "+score2 , "Game over", 1);
@@ -342,47 +302,47 @@ implements ComponentListener, KeyListener, Runnable {
 				alive = false;
 				Menu.main(null);
 			}
-			
-		
-			else {
-			JOptionPane.showMessageDialog (null, "You made it to the next level! \n Blue Snake: "+ score1 +" points and Red Snake: "+score2+" points" , "Level "+(level.levelNumber+1), 1);
-			
-			//goes to the next level
-			level.moveLevelUp();
-			
-			//changes speed of snake
-			delay=level.speed;
-			
-			foodCount=0;
-			
-			//changes the background image
-			try {
-				background = ImageIO.read(new File("bg"+level.levelNumber+".png"));
-			} catch (IOException e) {
-			}
-			//deletes all black holes
-			for(int i=0; i<blackHoleNumber; i++ ){
-				tx[i]=0;
-				ty[i]=0;
-			}
-			blackHoleNumber=0;
-			
-			//gets start positions for the next level
-			xp0=obstacle.getStartPosX(level.levelNumber);
-			yp0=obstacle.getStartPosY(level.levelNumber);
-			xp20=obstacle.getStartPosX2(level.levelNumber);
-			yp20=obstacle.getStartPosY2(level.levelNumber);
-			dx=obstacle.getDx(level.levelNumber);
-			dy=obstacle.getDy(level.levelNumber);
-			dx2=obstacle.getDx2(level.levelNumber);
-			dy2=obstacle.getDy2(level.levelNumber);
-			
-			player1 = new SnakeHead(initialSize, xp0, yp0);
-			player1.setPos(player1.first, xp0, yp0, dx, dy);
 
-			player2 = new SnakeHead(initialSize, xp20, yp20);
-			player2.setPos(player2.first, xp20, yp20, dx2, dy2);
-			
+
+			else {
+				JOptionPane.showMessageDialog (null, "You made it to the next level! \n Blue Snake: "+ score1 +" points and Red Snake: "+score2+" points" , "Level "+(level.levelNumber+1), 1);
+
+				//goes to the next level
+				level.moveLevelUp();
+
+				//changes speed of snake
+				delay=level.speed;
+
+				foodCount=0;
+
+				//changes the background image
+				try {
+					background = ImageIO.read(new File("bg"+level.levelNumber+".png"));
+				} catch (IOException e) {
+				}
+				//deletes all black holes
+				for(int i=0; i<blackHoleNumber; i++ ){
+					tx[i]=0;
+					ty[i]=0;
+				}
+				blackHoleNumber=0;
+
+				//gets start positions for the next level
+				xp0=obstacle.getStartPosX(level.levelNumber);
+				yp0=obstacle.getStartPosY(level.levelNumber);
+				xp20=obstacle.getStartPosX2(level.levelNumber);
+				yp20=obstacle.getStartPosY2(level.levelNumber);
+				dx=obstacle.getDx(level.levelNumber);
+				dy=obstacle.getDy(level.levelNumber);
+				dx2=obstacle.getDx2(level.levelNumber);
+				dy2=obstacle.getDy2(level.levelNumber);
+
+				player1 = new SnakeHead(initialSize+1, xp0, yp0);
+				player1.setPos(player1.first, xp0, yp0, dx, dy);
+
+				player2 = new SnakeHead(initialSize+1, xp20, yp20);
+				player2.setPos(player2.first, xp20, yp20, dx2, dy2);
+
 			}
 		}
 	}
@@ -391,25 +351,24 @@ implements ComponentListener, KeyListener, Runnable {
 		while (alive) { // loop while both snakes are alive
 			//update positions
 			if (snake1Alive) {
+				player1.setPos(player1.first);
+				player1.first.setPos(player1.getX(), player1.getY());
 				player1.setX(player1.getX()+dx);
 				player1.setY(player1.getY()+dy);
-				player1.first.setPos(player1.getX()-dx, player1.getY()-dy);
-				player1.setPos(player1.first);
 			}
 
 			if (snake2Alive) {
+				player2.setPos(player2.first);
+				player2.first.setPos(player2.getX(), player2.getY());
 				player2.setX(player2.getX()+dx2);
 				player2.setY(player2.getY()+dy2);
-				player2.first.setPos(player2.getX()-dx2, player2.getY()-dy2);
-				player2.setPos(player2.first);
 			}
 
 			// check to see if the snakes have hit any walls
 			player1.checkWalls(xlen, xsize, ylen, ysize);
 			player2.checkWalls(xlen, xsize, ylen, ysize);
 
-			// checks food and generate new if needed
-	
+			// checks food and generates new if needed
 			if (player1.checkFood(randomNumber1, randomNumber2, xsize, ysize, xlen, ylen)){
 				randomNumbers = FoodChecker.foodCheck(XPos, YPos, randomNumber1, randomNumber2, xsize, xlen, ysize, ylen);
 				randomNumber1 = randomNumbers[0];
@@ -418,7 +377,6 @@ implements ComponentListener, KeyListener, Runnable {
 				makeBlackHole();
 				player1.incSize();
 			}
-
 			if (player2.checkFood(randomNumber1, randomNumber2, xsize, ysize, xlen, ylen)){
 				randomNumbers = FoodChecker.foodCheck(XPos, YPos, randomNumber1, randomNumber2, xsize, xlen, ysize, ylen);
 				randomNumber1 = randomNumbers[0];
@@ -433,9 +391,7 @@ implements ComponentListener, KeyListener, Runnable {
 				dx=0;
 				dy=0;
 				snake1Alive=false;
-
 			}
-
 			if (player2.checkSnake(alive)==false) {
 				dx2=0;
 				dy2=0;
@@ -446,8 +402,8 @@ implements ComponentListener, KeyListener, Runnable {
 			Obstacles obstacle = new Obstacles(level.levelNumber);
 
 			XPos = obstacle.DrawObstacles("x");
-		    YPos = obstacle.DrawObstacles("y");
-		    
+			YPos = obstacle.DrawObstacles("y");
+
 			if (player1.checkObstacles(XPos, YPos, xlen, ylen, xsize, ysize )==true){
 				dx=0;
 				dy=0;
@@ -465,14 +421,14 @@ implements ComponentListener, KeyListener, Runnable {
 
 			checkCollision();
 			checkBullet();
-			
+
 			//makes sure that a new level starts if both snakes died
 			if (snake1Alive==false && snake2Alive==false){
 				foodCount=levelLength;
 			}
-			
+
 			checkLevel();
-			
+
 			//shoot
 			for (Bullet b: player1.bullets) b.move();
 			for (Bullet b: player2.bullets) b.move();
@@ -497,7 +453,7 @@ implements ComponentListener, KeyListener, Runnable {
 		//control first snake with space and arrow keys
 		if (e.getKeyCode()==32) { //space
 			shootActivate1 = true;
-			ammunitionsNumber1--;
+			//ammunitionsNumber1--;
 			for (Bullet b : player1.bullets){
 				if (!b.isShot){
 					b.speedBx = 2*dx;
@@ -554,7 +510,7 @@ implements ComponentListener, KeyListener, Runnable {
 		if (e.getKeyCode()==71) // G
 		{ //shooting
 			shootActivate2 = true;
-			ammunitionsNumber2--;
+			//ammunitionsNumber2--;
 			for (Bullet b : player2.bullets){
 				if (!b.isShot){
 					b.speedBx = 2*dx2;
