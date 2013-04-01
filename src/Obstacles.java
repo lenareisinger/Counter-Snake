@@ -258,10 +258,10 @@ public class Obstacles
 			xp0=400;
 		}
 		if (level==3){
-			xp0=380;
+			xp0=360;
 		}
 		if (level==4){
-			xp0=300;
+			xp0=320;
 		}
 		if (level==5){
 			xp0=400;
