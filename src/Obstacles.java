@@ -1,3 +1,5 @@
+import java.awt.Color;
+
 public class Obstacles 
 {
 	int level;
@@ -204,6 +206,46 @@ public class Obstacles
 			}
 		}
 		return positions;
+	}
+	
+	public static Color getColour(int level)
+	{
+		Color[] colors = new Color[5];
+        colors[0] = Color.gray;
+        colors[1] = Color.cyan;
+        colors[2] = Color.darkGray;
+        colors[3] = Color.gray;
+        colors[4] = Color.magenta;
+        
+		if (level==1)
+		{
+			return colors[0];
+		}
+		
+		else if (level==2)
+		{
+			return colors[1];
+		}
+		
+		else if (level==3)
+		{
+			return colors[2];
+		}
+		
+		else if (level==4)
+		{
+			return colors[3];
+		}
+		
+		else if (level ==5)
+		{
+			return colors[4];
+		}
+		
+		else
+		{
+			return colors[0];
+		}
 	}
 	
 	//sets start positions for each level

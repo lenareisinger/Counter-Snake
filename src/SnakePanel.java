@@ -155,7 +155,7 @@ implements ComponentListener, KeyListener, Runnable {
 		{
 			if(!((XPos[i]==-1)&&(YPos[i]==-1)))
 			{
-				g2.setPaint(Color.gray);
+				g2.setPaint(Obstacles.getColour(level.levelNumber));
 				g2.fill(new Rectangle2D.Double(XPos[i], YPos[i], xlen, ylen));
 				g2.setColor(Color.black);
 				g2.draw(new Rectangle2D.Double(XPos[i], YPos[i], xlen, ylen));
@@ -370,7 +370,7 @@ implements ComponentListener, KeyListener, Runnable {
 
 			// checks food and generates new if needed
 			if (player1.checkFood(randomNumber1, randomNumber2, xsize, ysize, xlen, ylen)){
-				randomNumbers = FoodChecker.foodCheck(XPos, YPos, randomNumber1, randomNumber2, xsize, xlen, ysize, ylen);
+				randomNumbers = FoodChecker.foodCheck(tx, ty, player1.getArrX(), player1.getArrY(), player2.getArrX(), player2.getArrY(), XPos, YPos, randomNumber1, randomNumber2, xsize, xlen, ysize, ylen);
 				randomNumber1 = randomNumbers[0];
 				randomNumber2 = randomNumbers[1];
 				foodCount++;
@@ -378,7 +378,7 @@ implements ComponentListener, KeyListener, Runnable {
 				player1.incSize();
 			}
 			if (player2.checkFood(randomNumber1, randomNumber2, xsize, ysize, xlen, ylen)){
-				randomNumbers = FoodChecker.foodCheck(XPos, YPos, randomNumber1, randomNumber2, xsize, xlen, ysize, ylen);
+				randomNumbers = FoodChecker.foodCheck(tx, ty, player1.getArrX(), player1.getArrY(), player2.getArrX(), player2.getArrY(), XPos, YPos, randomNumber1, randomNumber2, xsize, xlen, ysize, ylen);
 				randomNumber1 = randomNumbers[0];
 				randomNumber2 = randomNumbers[1];
 				foodCount++;
